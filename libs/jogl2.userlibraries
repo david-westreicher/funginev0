@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="jogl2windows" systemlibrary="false">
+        <archive nativelibpaths="Fungine/libs/jogl-2.0-b11-20101213-windows-amd64/lib" path="/Fungine/libs/jogl-2.0-b11-20101213-windows-amd64/jar/gluegen-rt.jar"/>
+        <archive nativelibpaths="Fungine/libs/jogl-2.0-b11-20101213-windows-amd64/lib" path="/Fungine/libs/jogl-2.0-b11-20101213-windows-amd64/jar/jogl.all.jar"/>
+        <archive nativelibpaths="Fungine/libs/jogl-2.0-b11-20101213-windows-amd64/lib" path="/Fungine/libs/jogl-2.0-b11-20101213-windows-amd64/jar/nativewindow.all.jar"/>
+        <archive nativelibpaths="Fungine/libs/jogl-2.0-b11-20101213-windows-amd64/lib" path="/Fungine/libs/jogl-2.0-b11-20101213-windows-amd64/jar/newt.all.jar"/>
+    </library>
+</eclipse-userlibraries>

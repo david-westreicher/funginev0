@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects>
+	<!-- <object name="bunny" layer= "0"> <renderer>obj\ak47.obj:obj</renderer> 
+		</object> <object name="minecraft" layer= "0"> <renderer>obj\humanoid_tri.obj:obj</renderer> 
+		<physics>box:50</physics> </object> <object name="overg" layer= "0"> <renderer>obj\IGF_Guard.obj:obj</renderer> 
+		</object> -->
+	<object name="Box" layer="0">
+		<renderer>obj\sphere.obj:obj</renderer>
+		<physics>sphere:100</physics>
+	</object>
+
+	<object name="Terrain" layer="0">
+		<renderer>terrain</renderer>
+		<physics>terrain:25000</physics>
+	</object>
+
+	<object name="Player" layer="0">
+		<renderer>obj\capsule:obj</renderer>
+		<physics>capsule:50:100</physics>
+	</object>
+
+
+	<object name="Wall" layer="0">
+		<renderer>obj\box.obj:obj</renderer>
+		<physics>wall:50000</physics>
+	</object>
+
+	<object name="StaticBox" layer="0">
+		<renderer>obj\box.obj:obj</renderer>
+	</object>
+
+	<object name="Sphere" layer="0">
+		<renderer>obj\sphere.obj:obj</renderer>
+		<physics>sphere:100</physics>
+	</object>
+
+
+	<object name="CamTest" layer="0">
+	</object>
+
+	<!-- -->
+
+	<object name="Skybox-b" layer="0">
+		<renderer>img\lostvalley_south.bmp</renderer>
+	</object>
+	<object name="Skybox-d" layer="0">
+		<renderer>img\lostvalley_down.bmp</renderer>
+	</object>
+	<object name="Skybox-f" layer="0">
+		<renderer>img\lostvalley_north.bmp</renderer>
+	</object>
+
+	<object name="Skybox-u" layer="0">
+		<renderer>img\lostvalley_up.bmp</renderer>
+	</object>
+	<object name="Skybox-l" layer="0">
+		<renderer>img\lostvalley_east.bmp</renderer>
+	</object>
+
+	<object name="Skybox-r" layer="0">
+		<renderer>img\lostvalley_west.bmp</renderer>
+	</object>
+
+</objects>
