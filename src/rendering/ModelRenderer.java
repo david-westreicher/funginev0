@@ -35,7 +35,7 @@ public class ModelRenderer extends GameObjectRenderer {
 	/**
 	 * @uml.property name="vboIndices" multiplicity="(0 -1)" dimension="1"
 	 */
-	private int[] vboIndices = new int[1];
+	private int[] vboIndices;
 	private int[] vboNormals = new int[1];
 	private int[] vboColors = new int[1];
 	/**
@@ -45,7 +45,7 @@ public class ModelRenderer extends GameObjectRenderer {
 	/**
 	 * @uml.property name="indexCount"
 	 */
-	private int indexCount;
+	protected int[] indexCounts;
 	/**
 	 * @uml.property name="indices"
 	 */
@@ -67,22 +67,29 @@ public class ModelRenderer extends GameObjectRenderer {
 		this(new ObjLoader(s));
 	}
 
-	public ModelRenderer(final FloatBuffer vertices, final IntBuffer indices,
-			final FloatBuffer normals) {
+	public ModelRenderer(final FloatBuffer vertices, final FloatBuffer normals,
+			final IntBuffer... multiIndices) {
 		super(true);
-		init(vertices, indices, normals, null);
+		init(vertices, normals, null, multiIndices);
 	}
 
-	protected void init(final FloatBuffer vertices, final IntBuffer indices,
-			final FloatBuffer normals, final FloatBuffer colors) {
+	protected void init(final FloatBuffer vertices, final FloatBuffer normals,
+			final FloatBuffer colors, final IntBuffer... multiIndices) {
 		hasNormals = normals != null;
 		hasColors = colors != null;
 		vertexCount = vertices.capacity();
-		indexCount = indices.capacity();
 		Log.log(this, "Vertices: " + vertexCount / 3);
+		// multiple index buffers
+		vboIndices = new int[multiIndices.length];
+		indexCounts = new int[multiIndices.length];
+		int i = 0;
+		for (IntBuffer indices : multiIndices) {
+			Log.log(this, "indices: " + indices);
+			indexCounts[i++] = indices.capacity();
+		}
+
 		if (hasNormals)
 			Log.log(this, "Normals: " + normals.capacity() / 3);
-		Log.log(this, "indices: " + indexCount);
 		final int staticDraw = isStatic() ? GL2.GL_STATIC_DRAW
 				: GL2.GL_DYNAMIC_DRAW;
 		RenderUpdater.executeInOpenGLContext(new Runnable() {
@@ -94,11 +101,13 @@ public class ModelRenderer extends GameObjectRenderer {
 				gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboVertices[0]);
 				gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertexCount
 						* Buffers.SIZEOF_FLOAT, vertices, staticDraw);
-				if (vboIndices[0] == 0)
-					gl.glGenBuffers(1, vboIndices, 0);
-				gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboIndices[0]);
-				gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, indexCount
-						* Buffers.SIZEOF_INT, indices, staticDraw);
+				// if (vboIndices[0] == 0)
+				gl.glGenBuffers(vboIndices.length, vboIndices, 0);
+				for (int i = 0; i < vboIndices.length; i++) {
+					gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboIndices[i]);
+					gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, indexCounts[i]
+							* Buffers.SIZEOF_INT, multiIndices[i], staticDraw);
+				}
 				if (hasNormals) {
 					if (vboNormals[0] == 0)
 						gl.glGenBuffers(1, vboNormals, 0);
@@ -123,7 +132,7 @@ public class ModelRenderer extends GameObjectRenderer {
 	}
 
 	public ModelRenderer(ObjLoader loader) {
-		this(loader.vertices, loader.indices, loader.normals);
+		this(loader.vertices, loader.normals, loader.indices);
 	}
 
 	@Override
@@ -133,7 +142,8 @@ public class ModelRenderer extends GameObjectRenderer {
 		else
 			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboIndices[0]);
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER,
+				vboIndices[getIndexNumberToRender()]);
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboVertices[0]);
 		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
 		gl.glVertexPointer(3, GL2.GL_FLOAT, 0, 0);
@@ -193,12 +203,17 @@ public class ModelRenderer extends GameObjectRenderer {
 			ShaderScript.setUniformMatrix("rotationMatrices",
 					transformBuffers[3], true);
 			// transformShader.setUniform("interp", interp);
-			gl.glDrawElementsInstanced(GL2.GL_TRIANGLES, indexCount,
-					GL2.GL_UNSIGNED_INT, null, instancesNum);
+			gl.glDrawElementsInstanced(GL2.GL_TRIANGLES,
+					indexCounts[getIndexNumberToRender()], GL2.GL_UNSIGNED_INT,
+					null, instancesNum);
 			start += NUM_RENDERED_INST;
 		}
 		if (ShaderScript.isShaderActivated(transformShader))
 			transformShader.end(gl);
+	}
+
+	protected int getIndexNumberToRender() {
+		return 0;
 	}
 
 	private void putBuffer(float[]... puts) {
@@ -221,7 +236,8 @@ public class ModelRenderer extends GameObjectRenderer {
 	@Override
 	public void draw(GL2 gl) {
 		gl.glColor3fv(RenderUpdater.cgo.color, 0);
-		gl.glDrawElements(GL2.GL_TRIANGLES, indexCount, GL2.GL_UNSIGNED_INT, 0);
+		gl.glDrawElements(GL2.GL_TRIANGLES,
+				indexCounts[getIndexNumberToRender()], GL2.GL_UNSIGNED_INT, 0);
 	}
 
 }

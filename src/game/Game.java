@@ -16,6 +16,8 @@ import java.util.Map;
 import javax.script.ScriptException;
 import javax.swing.SwingUtilities;
 
+import physics.PhysicsTest;
+
 import experiment.OpenVC;
 
 import manager.Manageable;
@@ -144,6 +146,8 @@ public class Game {
 			loop.renderer = new SimpleRenderer();
 		} else if (c.equals("gamemechanics")) {
 			loop.mechanics = new GameMechanics();
+		} else if (c.equals("physics")) {
+			((GameMechanics) loop.mechanics).physics = new PhysicsTest();
 		}
 	}
 

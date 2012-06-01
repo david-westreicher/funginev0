@@ -41,24 +41,24 @@
 	<!-- -->
 
 	<object name="Skybox-b" layer="0">
-		<renderer>img\lostvalley_south.bmp</renderer>
+		<renderer>img\nightsky_south.bmp</renderer>
 	</object>
 	<object name="Skybox-d" layer="0">
-		<renderer>img\lostvalley_down.bmp</renderer>
+		<renderer>img\nightsky_down.bmp</renderer>
 	</object>
 	<object name="Skybox-f" layer="0">
-		<renderer>img\lostvalley_north.bmp</renderer>
+		<renderer>img\nightsky_north.bmp</renderer>
 	</object>
 
 	<object name="Skybox-u" layer="0">
-		<renderer>img\lostvalley_up.bmp</renderer>
+		<renderer>img\nightsky_up.bmp</renderer>
 	</object>
 	<object name="Skybox-l" layer="0">
-		<renderer>img\lostvalley_east.bmp</renderer>
+		<renderer>img\nightsky_east.bmp</renderer>
 	</object>
 
 	<object name="Skybox-r" layer="0">
-		<renderer>img\lostvalley_west.bmp</renderer>
+		<renderer>img\nightsky_west.bmp</renderer>
 	</object>
 
 </objects>

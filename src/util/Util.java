@@ -22,6 +22,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -193,9 +195,11 @@ public class Util {
 		noisSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				TerrainRenderer.NOISE = noisSlider.getValue() / 10.0f;
-				((TerrainRenderer) GameObjectType.getType("Terrain").renderer)
-						.generate();
+				if (!noisSlider.getValueIsAdjusting()) {
+					TerrainRenderer.NOISE = noisSlider.getValue() / 10.0f;
+					((TerrainRenderer) GameObjectType.getType("Terrain").renderer)
+							.generate();
+				}
 			}
 		});
 

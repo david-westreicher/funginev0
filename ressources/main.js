@@ -28,7 +28,7 @@ function init(game, factory) {
     cam = factory.createGameObject("CamTest");
     cam.setPos(0, 4000, 0);
     cam.rotation[1] = -Math.PI / 2;
-    //game.world.add(cam);
+    game.world.add(cam);
 
     playerLight = factory.createGameObject("CamTest");
     playerLight.setPos(0, 500, 0);
@@ -54,6 +54,7 @@ function init(game, factory) {
     terrain.setPos(0, 0, 0);
     terrain.friction = 0;
     terrain.setFixed(true);
+    terrain.setColor(1,1,1);
     game.world.add(terrain);
 
     skyboxl = factory.createGameObject("Skybox-l");
@@ -135,12 +136,12 @@ function update(game) {
     if (cameraMode) {
 
         game.cam.pos[0] += Math.cos(game.cam.rotation[0]) * xSpeed
-                * movementSpeed * 2;
+                * movementSpeed * 50;
         game.cam.pos[2] += Math.sin(game.cam.rotation[0]) * xSpeed
-                * movementSpeed * 2;
+                * movementSpeed * 50;
 
         for ( var i = 0; i < 3; i++)
-            game.cam.pos[i] += mov[i] * ySpeed * movementSpeed * 2;
+            game.cam.pos[i] += mov[i] * ySpeed * movementSpeed * 50;
     } else {
         player.setLinearVelocity(Math.cos(game.cam.rotation[0]) * xSpeed
                 * movementSpeed + mov[0] * ySpeed * movementSpeed, Math

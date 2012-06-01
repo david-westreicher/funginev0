@@ -38,7 +38,7 @@ public class SimpleRenderer extends RenderUpdater {
 		shadowMapScript = new ShaderScript("shader\\shadowMap.glsl");
 		renderDepth = new ShaderScript("shader\\renderDepth.glsl");
 		textureShader = new ShaderScript("shader\\textureShader.glsl");
-		dofShader = new ShaderScript("shader\\glow.glsl");
+		dofShader = new ShaderScript("shader\\blur.glsl");
 		super.executeInOpenGLContext(new Runnable() {
 			@Override
 			public void run() {
@@ -159,6 +159,8 @@ public class SimpleRenderer extends RenderUpdater {
 					// float distanceFromCam =
 					// PhysicsTest.getInstance().rayTest(
 					// cam, ZFar);
+					ShaderScript.setUniform("time",
+							(float) Game.INSTANCE.loop.tick / 100);
 					ShaderScript.setUniform("focus", cam.focus);
 					ShaderScript.setUniform("zNear", ZNear);
 					ShaderScript.setUniform("zFar", ZFar);

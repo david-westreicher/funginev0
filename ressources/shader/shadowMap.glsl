@@ -101,4 +101,5 @@ void main()
 	//gl_FragColor =shadow;
 	//gl_FragColor = vec4(normal,1);
 	//gl_FragColor = vec4(length(glVertex.xz));
+	//gl_FragColor = gl_Color;
 }

@@ -21,17 +21,18 @@ import world.World;
 public class GameMechanics implements Updatable {
 
 	/**
-	 * @uml.property  name="physics"
-	 * @uml.associationEnd  multiplicity="(1 1)"
+	 * @uml.property name="physics"
+	 * @uml.associationEnd multiplicity="(1 1)"
 	 */
-	private PhysicsTest physics;
+	public PhysicsTest physics;
 
 	public GameMechanics() {
-		physics = new PhysicsTest();
 	}
 
 	@Override
 	public void dispose() {
+		if (physics != null)
+			physics.dispose();
 	}
 
 	@Override
@@ -74,8 +75,8 @@ public class GameMechanics implements Updatable {
 				}
 			}
 		}
-		
-		physics.update(objs);
+		if (physics != null)
+			physics.update(objs);
 
 		if (Game.DEBUG)
 			for (String type : objs.keySet()) {
@@ -86,6 +87,5 @@ public class GameMechanics implements Updatable {
 
 		Game.INSTANCE.input.mouse.update();
 	}
-
 
 }

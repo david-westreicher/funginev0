@@ -99,6 +99,12 @@ public class GameObject extends VariableHolder {
 		setTo(oldPos, pos);
 	}
 
+	public void setColor(float r,float g,float b) {
+		color[0] = r;
+		color[1] = g;
+		color[2] = b;
+	}
+
 	public void setRotation(float x, float y, float z) {
 		rotation[0] = x;
 		rotation[1] = y;

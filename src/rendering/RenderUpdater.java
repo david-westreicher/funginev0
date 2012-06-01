@@ -38,7 +38,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 public class RenderUpdater implements Updatable, GLEventListener {
 	protected static final boolean USE_OBJECT_INTERP = false;
 	protected static final boolean SMOOTHSTEP_INTERP = false;
-	protected static final float ZFAR_DISTANCE = 20000;// TODO changed from 5000
+	protected static final float ZFAR_DISTANCE = 50000;// TODO changed from 5000
 	protected static final float ZNEAR = 100;
 	public static float ZFar;
 	public static float ZNear;

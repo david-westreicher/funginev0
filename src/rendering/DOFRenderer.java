@@ -15,7 +15,7 @@ import util.Log;
 
 public class DOFRenderer extends RenderUpdater {
 
-	public static boolean POST_PROCESS = true;
+	public static boolean POST_PROCESS = false;
 	/**
 	 * @uml.property  name="fobs"
 	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="java.lang.Integer"

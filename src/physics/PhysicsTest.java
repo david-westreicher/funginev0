@@ -287,4 +287,8 @@ public class PhysicsTest {
 		}
 
 	}
+
+	public void dispose() {
+		dynamicsWorld.destroy();
+	}
 }

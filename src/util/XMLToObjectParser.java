@@ -99,11 +99,12 @@ public class XMLToObjectParser extends DefaultHandler {
 					float terrainSize = Float.parseFloat(split[1])
 							* PhysicsTest.PHYSICS_SCALE;
 					HeightfieldTerrainShape height = new HeightfieldTerrainShape(
-							TerrainRenderer.WIDTH + 1,
-							TerrainRenderer.HEIGHT + 1,
+							TerrainRenderer.STATIC_WIDTH + 1,
+							TerrainRenderer.STATIC_HEIGHT + 1,
 							TerrainRenderer.getHeightField(), terrainSize,
 							-0.5f, 0.5f, HeightfieldTerrainShape.YAXIS, false);
-					float gridSpacing = terrainSize / TerrainRenderer.WIDTH;
+					float gridSpacing = terrainSize
+							/ TerrainRenderer.STATIC_WIDTH;
 					Log.log(this, gridSpacing, size);
 					height.setLocalScaling(new Vector3f(gridSpacing, 1,
 							gridSpacing));

@@ -1,1 +1,0 @@
-object.rotation+=10;
