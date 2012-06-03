@@ -25,7 +25,8 @@ void main()
 {
  
   gl_FragColor.rgb = vec3(LinearizeDepth(gl_TexCoord[0].xy));
-  // gl_FragColor.a = 1;
+  if( gl_FragColor.r==1)
+  	discard;
    //gl_FragColor = vec4(texture2D(depth, gl_TexCoord[0].xy)/);
    //gl_FragColor = vec4(0.5);
 }

@@ -13,11 +13,12 @@ var movementSpeed = 5;
 var terrain;
 var playerLight = null;
 var playerSize = 100;
+var CAM_SPEED = 10;
 
 function init(game, factory) {
     game.cam.setPos(0, 100, 500);
     game.cam.rotation[0] = Math.PI;
-    game.hideMouse();
+    //game.hideMouse();
     player = factory.createGameObject("Player");
     player.size[0] = playerSize;
     player.size[1] = playerSize;
@@ -28,7 +29,7 @@ function init(game, factory) {
     cam = factory.createGameObject("CamTest");
     cam.setPos(0, 4000, 0);
     cam.rotation[1] = -Math.PI / 2;
-    game.world.add(cam);
+   // game.world.add(cam);
 
     playerLight = factory.createGameObject("CamTest");
     playerLight.setPos(0, 500, 0);
@@ -47,14 +48,22 @@ function init(game, factory) {
     vid.setPos(0, 0, 0);
     // game.world.add(vid);
 
-    terrain = factory.createGameObject("Terrain");
+    // terrain = factory.createGameObject("Terrain");
+    // terrain.size[0] = 25000;
+    // terrain.size[1] = 25000;
+    // terrain.size[2] = 25000;
+    // terrain.setPos(0, 0, 0);
+    // terrain.friction = 0;
+    // terrain.setFixed(true);
+    // terrain.setColor(1,1,1);
+    // game.world.add(terrain);
+
+    terrain = factory.createGameObject("VoxelTerrain");
     terrain.size[0] = 25000;
     terrain.size[1] = 25000;
     terrain.size[2] = 25000;
     terrain.setPos(0, 0, 0);
-    terrain.friction = 0;
-    terrain.setFixed(true);
-    terrain.setColor(1,1,1);
+    terrain.setColor(1, 1, 1);
     game.world.add(terrain);
 
     skyboxl = factory.createGameObject("Skybox-l");
@@ -99,7 +108,7 @@ function init(game, factory) {
     skyboxd.size[2] = 1;
     skyboxd.rotation[0] = Math.PI / 2;
     skyboxd.rotation[1] = Math.PI;
-    skyboxd.rotation[2] = Math.PI * 1.5;
+    skyboxd.rotation[2] = Math.PI/2;
     skyboxd.setPos(0, -0.5, 0);
     game.world.add(skyboxd);
 
@@ -136,12 +145,12 @@ function update(game) {
     if (cameraMode) {
 
         game.cam.pos[0] += Math.cos(game.cam.rotation[0]) * xSpeed
-                * movementSpeed * 50;
+                * movementSpeed * CAM_SPEED;
         game.cam.pos[2] += Math.sin(game.cam.rotation[0]) * xSpeed
-                * movementSpeed * 50;
+                * movementSpeed * CAM_SPEED;
 
         for ( var i = 0; i < 3; i++)
-            game.cam.pos[i] += mov[i] * ySpeed * movementSpeed * 50;
+            game.cam.pos[i] += mov[i] * ySpeed * movementSpeed * CAM_SPEED;
     } else {
         player.setLinearVelocity(Math.cos(game.cam.rotation[0]) * xSpeed
                 * movementSpeed + mov[0] * ySpeed * movementSpeed, Math

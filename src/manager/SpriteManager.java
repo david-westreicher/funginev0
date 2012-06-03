@@ -48,13 +48,15 @@ public class SpriteManager extends Manager<SpriteRenderer> {
 				try {
 					text = TextureIO.newTexture(new File(
 							Settings.RESSOURCE_FOLDER + s), false);
-					text.bind();
-					text.setTexParameteri(GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_EDGE);
-					text.setTexParameteri(GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
-					text.setTexParameteri(GL2.GL_TEXTURE_MAG_FILTER,
-							GL2.GL_LINEAR);
-					text.setTexParameteri(GL2.GL_TEXTURE_MIN_FILTER,
-							GL2.GL_LINEAR);
+					text.bind(RenderUpdater.gl);
+					text.setTexParameteri(RenderUpdater.gl,
+							GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_EDGE);
+					text.setTexParameteri(RenderUpdater.gl,
+							GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
+					text.setTexParameteri(RenderUpdater.gl,
+							GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+					text.setTexParameteri(RenderUpdater.gl,
+							GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
 					sr.texture = text;
 					textures.put(s, text);
 				} catch (GLException e) {
@@ -76,10 +78,10 @@ public class SpriteManager extends Manager<SpriteRenderer> {
 				try {
 					text = AWTTextureIO.newTexture(GLProfile.getDefault(), bi,
 							false);
-					text.setTexParameteri(GL2.GL_TEXTURE_MAG_FILTER,
-							GL2.GL_LINEAR);
-					text.setTexParameteri(GL2.GL_TEXTURE_MIN_FILTER,
-							GL2.GL_LINEAR);
+					text.setTexParameteri(RenderUpdater.gl,
+							GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+					text.setTexParameteri(RenderUpdater.gl,
+							GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
 					sr.texture = text;
 					textures.put(name, text);
 				} catch (GLException e) {

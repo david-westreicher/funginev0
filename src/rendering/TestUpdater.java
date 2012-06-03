@@ -147,37 +147,37 @@ public class TestUpdater extends RenderUpdater {
 		}
 	}
 
-	private void createTex(int fobNum) {
-		int[] fboId = new int[1];
-		int[] texId = new int[1];
-		gl.glGenFramebuffers(1, fboId, 0);
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, fboId[0]);
-		gl.glGenTextures(1, texId, 0);
-		gl.glBindTexture(GL.GL_TEXTURE_2D, texId[0]);
-		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, width, height, 0,
-				GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Buffers
-						.newDirectByteBuffer(width * height * 4));
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-				GL.GL_LINEAR);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-				GL.GL_LINEAR);
-		gl.glFramebufferTexture2D(GL2.GL_FRAMEBUFFER, GL2.GL_COLOR_ATTACHMENT0,
-				GL.GL_TEXTURE_2D, texId[0], 0);
-		
-		gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-		Integer[] fob = new Integer[] { texId[0], fboId[0] };
-		if (fobs.size() < fobNum)
-			fobs.set(fobNum, fob);
-		else
-			fobs.add(fob);
-		int status = gl.glCheckFramebufferStatus(GL2.GL_FRAMEBUFFER);
-		if (status == GL2.GL_FRAMEBUFFER_COMPLETE) {
-			gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
-			Log.log(this, "Frame buffer object successfully created");
-		} else {
-			throw new IllegalStateException("Frame Buffer Oject not created.");
-		}
-	}
+//	private void createTex(int fobNum) {
+//		int[] fboId = new int[1];
+//		int[] texId = new int[1];
+//		gl.glGenFramebuffers(1, fboId, 0);
+//		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, fboId[0]);
+//		gl.glGenTextures(1, texId, 0);
+//		gl.glBindTexture(GL.GL_TEXTURE_2D, texId[0]);
+//		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, width, height, 0,
+//				GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Buffers
+//						.newDirectByteBuffer(width * height * 4));
+//		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+//				GL.GL_LINEAR);
+//		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+//				GL.GL_LINEAR);
+//		gl.glFramebufferTexture2D(GL2.GL_FRAMEBUFFER, GL2.GL_COLOR_ATTACHMENT0,
+//				GL.GL_TEXTURE_2D, texId[0], 0);
+//		
+//		gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+//		Integer[] fob = new Integer[] { texId[0], fboId[0] };
+//		if (fobs.size() < fobNum)
+//			fobs.set(fobNum, fob);
+//		else
+//			fobs.add(fob);
+//		int status = gl.glCheckFramebufferStatus(GL2.GL_FRAMEBUFFER);
+//		if (status == GL2.GL_FRAMEBUFFER_COMPLETE) {
+//			gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
+//			Log.log(this, "Frame buffer object successfully created");
+//		} else {
+//			throw new IllegalStateException("Frame Buffer Oject not created.");
+//		}
+//	}
 
 	/*protected void renderOrtho() {
 		gl.glPushMatrix();

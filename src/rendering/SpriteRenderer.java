@@ -79,7 +79,7 @@ public class SpriteRenderer extends GameObjectRenderer {
 	public void init(GL2 gl) {
 		if (texture != null) {
 			// initCall(gl);
-			texture.bind();
+			texture.bind(gl);
 			gl.glCallList(CALL_LIST_NUM[0]);
 		}
 	}
@@ -94,7 +94,7 @@ public class SpriteRenderer extends GameObjectRenderer {
 	@Override
 	public void end(GL2 gl) {
 		// endCall(gl);
-		texture.disable();
+		texture.disable(gl);
 		gl.glCallList(CALL_LIST_NUM[2]);
 	}
 

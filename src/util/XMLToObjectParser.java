@@ -119,6 +119,8 @@ public class XMLToObjectParser extends DefaultHandler {
 					currentObject.renderer = new LightRenderer();
 				else if (s.equals("terrain"))
 					currentObject.renderer = new TerrainRenderer();
+				else if (s.equals("voxelTerrain"))
+					currentObject.renderer = new VoxelTerrainRenderer();
 				else if (s.split("\\\\")[0].equals("img"))
 					currentObject.renderer = new SpriteRenderer(split[0]);
 				if (split.length > 1) {

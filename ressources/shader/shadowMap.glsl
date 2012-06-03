@@ -49,6 +49,9 @@ void main()
 	gl_FrontColor = gl_Color * vec4(colorArr[gl_InstanceID],1);
 	//gl_FrontColor = gl_Color;
 	gl_TexCoord[0]= gl_MultiTexCoord0;
+	float distFromCam = length(pos)/100;
+	gl_PointSize = sqrt(100000/(distFromCam*distFromCam*0.01+1));
+	//gl_PointSize = 10;
 }
 //fragment
 #version 140

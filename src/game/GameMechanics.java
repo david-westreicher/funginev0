@@ -9,6 +9,7 @@ import javax.script.ScriptException;
 
 import physics.PhysicsTest;
 
+import rendering.BerkeliumWrapper;
 import script.GameScript;
 import script.Script;
 import settings.Settings;

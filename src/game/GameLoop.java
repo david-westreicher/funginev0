@@ -7,11 +7,11 @@ import java.util.List;
 import rendering.RenderUpdater;
 import settings.Settings;
 import util.Log;
+import util.RepeatedRunnable;
 import util.RepeatedThreadExact;
 import util.Stoppable;
 import util.TickCounter;
 import util.Util;
-import world.RepeatedRunnable;
 
 public class GameLoop extends RepeatedRunnable {
 	public static int TICKS_PER_SECOND = 60;

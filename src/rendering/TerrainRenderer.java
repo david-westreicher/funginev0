@@ -58,8 +58,8 @@ public class TerrainRenderer extends ModelRenderer {
 						* (HEIGHT / 2 + 1)) * 3);
 		getVertices(vertices);
 		getIndices(indices[0], 0);
-		getNormals(normals, indices[0], 0);
-		getColors(colors);
+		//getNormals(normals, indices[0], 0);
+		//getColors(colors);
 		WIDTH = STATIC_WIDTH / 2;
 		HEIGHT = STATIC_HEIGHT / 2;
 		indices[1] = IntBuffer.allocate((WIDTH) * (HEIGHT) * 6);
@@ -67,9 +67,9 @@ public class TerrainRenderer extends ModelRenderer {
 		computeHeightMap();
 		getVertices(vertices);
 		getIndices(indices[1], (STATIC_WIDTH + 1) * (STATIC_HEIGHT + 1));
-		getNormals(normals, indices[1], (STATIC_WIDTH + 1)
-				* (STATIC_HEIGHT + 1));
-		getColors(colors);
+		//getNormals(normals, indices[1], (STATIC_WIDTH + 1)
+		//		* (STATIC_HEIGHT + 1));
+		//getColors(colors);
 		vertices.rewind();
 		indices[0].rewind();
 		indices[1].rewind();

@@ -19,14 +19,15 @@ public class VidRenderer extends SpriteRenderer {
 
 	public void init(GL2 gl) {
 		if (texture != null) {
-			texture.bind();
+			texture.bind(gl);
 			synchronized (OpenVC.MUTEX) {
 				/*
 				 * gl.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, OpenVC.width/4,
 				 * OpenVC.height, GL2.GL_BGR, GL2.GL_UNSIGNED_INT, OpenVC.data);
 				 */
-				texture.updateImage(new AWTTextureData(GLProfile.getDefault(),
-						GL2.GL_BGR, GL2.GL_UNSIGNED_INT, false, OpenVC.bi));
+				texture.updateImage(gl,
+						new AWTTextureData(GLProfile.getDefault(), GL2.GL_BGR,
+								GL2.GL_UNSIGNED_INT, false, OpenVC.bi));
 			}
 			gl.glCallList(CALL_LIST_NUM[0]);
 		}

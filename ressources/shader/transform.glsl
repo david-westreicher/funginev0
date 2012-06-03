@@ -43,8 +43,7 @@ vec4 applyTransform(vec4 vertex){
 void main(void)
 {
 	gl_Position = gl_ModelViewProjectionMatrix * applyTransform(gl_Vertex); 
-	vec3 color = colorArr[gl_InstanceID];
-	gl_FrontColor = vec4(color,1);
+	gl_FrontColor = gl_Color * vec4(colorArr[gl_InstanceID],1);
 	gl_TexCoord[0]= gl_MultiTexCoord0;
 }
 

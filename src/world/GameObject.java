@@ -26,7 +26,7 @@ public class GameObject extends VariableHolder {
 	public float[] force = new float[3];
 	public boolean fixed = false;
 	public float[] rotationMatrixArray = new float[9];
-	private Matrix3f rotationMatrix = new Matrix3f();
+	private Matrix3f rotationMatrix = new Matrix3f(1, 0, 0, 0, 1, 0, 0, 0, 1);
 	public float alpha = 1;
 	private static Vector3f tmpVector = new Vector3f();
 	private static Matrix3f tmpMatrix = new Matrix3f();
@@ -99,7 +99,7 @@ public class GameObject extends VariableHolder {
 		setTo(oldPos, pos);
 	}
 
-	public void setColor(float r,float g,float b) {
+	public void setColor(float r, float g, float b) {
 		color[0] = r;
 		color[1] = g;
 		color[2] = b;
@@ -160,8 +160,10 @@ public class GameObject extends VariableHolder {
 
 	public void setLinearVelocity(float x, float y) {
 		RigidBody rigidBody = getRigidBody();
-		Vector3f vel = rigidBody.getLinearVelocity(new Vector3f());
-		rigidBody.setLinearVelocity(new Vector3f(x, vel.y, y));
+		if (rigidBody != null) {
+			Vector3f vel = rigidBody.getLinearVelocity(new Vector3f());
+			rigidBody.setLinearVelocity(new Vector3f(x, vel.y, y));
+		}
 	}
 
 	public void setLinearVelocity(float x, float y, float z) {

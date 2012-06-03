@@ -27,9 +27,10 @@ import manager.SpriteManager;
 import rendering.DOFRenderer;
 import rendering.RenderUpdater;
 import rendering.ShadowMapRenderer;
-import rendering.SimpleRenderer;
+import rendering.ShadowMapRenderer;
 import rendering.SpriteRenderer;
 import rendering.TestUpdater;
+import rendering.VoxelRenderer;
 import script.Script;
 import settings.Settings;
 import util.Factory;
@@ -75,6 +76,7 @@ public class Game {
 	 * @uml.property name="r"
 	 */
 	private Robot r;
+	private boolean hasPhysics = false;
 
 	public Game() {
 		INSTANCE = this;
@@ -143,10 +145,11 @@ public class Game {
 	public void addComponent(String c) {
 		c = c.toLowerCase();
 		if (c.equals("renderer")) {
-			loop.renderer = new SimpleRenderer();
+			loop.renderer = new VoxelRenderer();
 		} else if (c.equals("gamemechanics")) {
 			loop.mechanics = new GameMechanics();
 		} else if (c.equals("physics")) {
+			hasPhysics = true;
 			((GameMechanics) loop.mechanics).physics = new PhysicsTest();
 		}
 	}
@@ -202,6 +205,10 @@ public class Game {
 
 	public int getHeight() {
 		return ((RenderUpdater) loop.renderer).height;
+	}
+
+	public boolean hasPhysics() {
+		return hasPhysics;
 	}
 
 }

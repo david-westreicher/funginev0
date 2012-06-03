@@ -39,7 +39,7 @@ import com.jogamp.opengl.util.texture.Texture;
 
 import rendering.DOFRenderer;
 import rendering.RenderUpdater;
-import rendering.SimpleRenderer;
+import rendering.ShadowMapRenderer;
 import rendering.TerrainRenderer;
 import settings.Settings;
 import world.GameObjectType;
@@ -166,12 +166,12 @@ public class Util {
 		fovSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
 		optionsPanel.add(fovSlider);
 		fovSlider.setMinimum(1);
-		fovSlider.setValue((int) SimpleRenderer.FOV);
+		fovSlider.setValue((int) ShadowMapRenderer.FOV);
 		fovSlider.setMaximum(180);
 		fovSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				SimpleRenderer.FOV = fovSlider.getValue();
+				ShadowMapRenderer.FOV = fovSlider.getValue();
 			}
 		});
 
@@ -207,13 +207,13 @@ public class Util {
 		offsetA.setAlignmentX(Component.CENTER_ALIGNMENT);
 		optionsPanel.add(offsetA);
 		offsetA.setMinimum(-100);
-		offsetA.setValue((int) (SimpleRenderer.OFFSET_A * 10));
+		offsetA.setValue((int) (ShadowMapRenderer.OFFSET_A * 10));
 		offsetA.setMaximum(100);
 		offsetA.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				SimpleRenderer.OFFSET_A = offsetA.getValue() / 10.0f;
-				Log.log(this, "offset a: " + SimpleRenderer.OFFSET_A);
+				ShadowMapRenderer.OFFSET_A = offsetA.getValue() / 10.0f;
+				Log.log(this, "offset a: " + ShadowMapRenderer.OFFSET_A);
 			}
 		});
 
@@ -221,13 +221,13 @@ public class Util {
 		offsetB.setAlignmentX(Component.CENTER_ALIGNMENT);
 		optionsPanel.add(offsetB);
 		offsetB.setMinimum(-10000);
-		offsetB.setValue((int) (SimpleRenderer.OFFSET_B * 1));
+		offsetB.setValue((int) (ShadowMapRenderer.OFFSET_B * 1));
 		offsetB.setMaximum(10000);
 		offsetB.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				SimpleRenderer.OFFSET_B = offsetB.getValue() / 1.0f;
-				Log.log(this, "offset b: " + SimpleRenderer.OFFSET_B);
+				ShadowMapRenderer.OFFSET_B = offsetB.getValue() / 1.0f;
+				Log.log(this, "offset b: " + ShadowMapRenderer.OFFSET_B);
 			}
 		});
 

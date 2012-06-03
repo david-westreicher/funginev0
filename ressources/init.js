@@ -6,7 +6,7 @@
 
 function init(game, factory) {
     game.addComponent("gamemechanics");
-    game.addComponent("physics");
+    //game.addComponent("physics");
     game.addComponent("renderer");
     // game.exit();
 }

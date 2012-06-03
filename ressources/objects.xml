@@ -13,6 +13,10 @@
 		<renderer>terrain</renderer>
 		<physics>terrain:25000</physics>
 	</object>
+	
+	<object name="VoxelTerrain" layer="0">
+		<renderer>voxelTerrain</renderer>
+	</object>
 
 	<object name="Player" layer="0">
 		<renderer>obj\capsule:obj</renderer>
@@ -41,24 +45,24 @@
 	<!-- -->
 
 	<object name="Skybox-b" layer="0">
-		<renderer>img\nightsky_south.bmp</renderer>
+		<renderer>img\pano_south.jpg</renderer>
 	</object>
 	<object name="Skybox-d" layer="0">
-		<renderer>img\nightsky_down.bmp</renderer>
+		<renderer>img\pano_down.jpg</renderer>
 	</object>
 	<object name="Skybox-f" layer="0">
-		<renderer>img\nightsky_north.bmp</renderer>
+		<renderer>img\pano_north.jpg</renderer>
 	</object>
 
 	<object name="Skybox-u" layer="0">
-		<renderer>img\nightsky_up.bmp</renderer>
+		<renderer>img\pano_up.jpg</renderer>
 	</object>
 	<object name="Skybox-l" layer="0">
-		<renderer>img\nightsky_east.bmp</renderer>
+		<renderer>img\pano_east.jpg</renderer>
 	</object>
 
 	<object name="Skybox-r" layer="0">
-		<renderer>img\nightsky_west.bmp</renderer>
+		<renderer>img\pano_west.jpg</renderer>
 	</object>
 
 </objects>

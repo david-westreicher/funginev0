@@ -58,6 +58,7 @@ public class ModelRenderer extends GameObjectRenderer {
 	private FloatBuffer[] transformBuffers;
 	private boolean hasNormals;
 	private boolean hasColors;
+	private boolean hasIndices;
 
 	public ModelRenderer() {
 		super(true);
@@ -77,15 +78,18 @@ public class ModelRenderer extends GameObjectRenderer {
 			final FloatBuffer colors, final IntBuffer... multiIndices) {
 		hasNormals = normals != null;
 		hasColors = colors != null;
-		vertexCount = vertices.capacity();
+		hasIndices = multiIndices != null;
+		vertexCount = vertices.capacity() / 3;
 		Log.log(this, "Vertices: " + vertexCount / 3);
 		// multiple index buffers
-		vboIndices = new int[multiIndices.length];
-		indexCounts = new int[multiIndices.length];
-		int i = 0;
-		for (IntBuffer indices : multiIndices) {
-			Log.log(this, "indices: " + indices);
-			indexCounts[i++] = indices.capacity();
+		if (hasIndices) {
+			vboIndices = new int[multiIndices.length];
+			indexCounts = new int[multiIndices.length];
+			int i = 0;
+			for (IntBuffer indices : multiIndices) {
+				Log.log(this, "indices: " + indices);
+				indexCounts[i++] = indices.capacity();
+			}
 		}
 
 		if (hasNormals)
@@ -99,14 +103,18 @@ public class ModelRenderer extends GameObjectRenderer {
 				if (vboVertices[0] == 0)
 					gl.glGenBuffers(1, vboVertices, 0);
 				gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboVertices[0]);
-				gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertexCount
+				gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertexCount * 3
 						* Buffers.SIZEOF_FLOAT, vertices, staticDraw);
 				// if (vboIndices[0] == 0)
-				gl.glGenBuffers(vboIndices.length, vboIndices, 0);
-				for (int i = 0; i < vboIndices.length; i++) {
-					gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboIndices[i]);
-					gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, indexCounts[i]
-							* Buffers.SIZEOF_INT, multiIndices[i], staticDraw);
+				if (hasIndices) {
+					gl.glGenBuffers(vboIndices.length, vboIndices, 0);
+					for (int i = 0; i < vboIndices.length; i++) {
+						gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER,
+								vboIndices[i]);
+						gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER,
+								indexCounts[i] * Buffers.SIZEOF_INT,
+								multiIndices[i], staticDraw);
+					}
 				}
 				if (hasNormals) {
 					if (vboNormals[0] == 0)
@@ -137,13 +145,15 @@ public class ModelRenderer extends GameObjectRenderer {
 
 	@Override
 	public void init(GL2 gl) {
+		// Optimize!!!!
+		gl.glColor4f(1, 1, 1, 1);
 		if (Game.WIREFRAME)
 			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
 		else
 			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER,
-				vboIndices[getIndexNumberToRender()]);
+		if (hasIndices)
+			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER,
+					vboIndices[getIndexNumberToRender()]);
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboVertices[0]);
 		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
 		gl.glVertexPointer(3, GL2.GL_FLOAT, 0, 0);
@@ -161,7 +171,8 @@ public class ModelRenderer extends GameObjectRenderer {
 
 	@Override
 	public void end(GL2 gl) {
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, 0);
+		if (hasIndices)
+			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, 0);
 		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
 		if (hasNormals) {
 			gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
@@ -174,8 +185,6 @@ public class ModelRenderer extends GameObjectRenderer {
 
 	@Override
 	public void draw(GL2 gl, List<GameObject> gos, float interp) {
-		// Optimize!!!!
-		gl.glColor4f(1, 1, 1, 1);
 
 		int start = 0;
 		if (!ShaderScript.isShaderActivated())
@@ -203,9 +212,13 @@ public class ModelRenderer extends GameObjectRenderer {
 			ShaderScript.setUniformMatrix("rotationMatrices",
 					transformBuffers[3], true);
 			// transformShader.setUniform("interp", interp);
-			gl.glDrawElementsInstanced(GL2.GL_TRIANGLES,
-					indexCounts[getIndexNumberToRender()], GL2.GL_UNSIGNED_INT,
-					null, instancesNum);
+			if (hasIndices)
+				gl.glDrawElementsInstanced(GL2.GL_TRIANGLES,
+						indexCounts[getIndexNumberToRender()],
+						GL2.GL_UNSIGNED_INT, null, instancesNum);
+			else
+				gl.glDrawArraysInstanced(GL2.GL_POINTS, 0, vertexCount,
+						instancesNum);
 			start += NUM_RENDERED_INST;
 		}
 		if (ShaderScript.isShaderActivated(transformShader))

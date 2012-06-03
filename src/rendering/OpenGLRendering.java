@@ -30,8 +30,8 @@ public class OpenGLRendering {
 	private Frame frame;
 
 	public OpenGLRendering(GLEventListener r) {
-		GLProfile.initSingleton(true);
-		GLProfile glp = GLProfile.getDefault();
+		GLProfile.initSingleton();
+		GLProfile glp = GLProfile.getMaximum(true);
 		GLCapabilities caps = new GLCapabilities(glp);
 		caps.setSampleBuffers(true);
 		// caps.setStencilBits(1);
