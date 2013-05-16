@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects>
+
+    <object name="Player" >
+        <renderer>obj\box.obj:obj</renderer>
+        <script>scripts\player.js</script>
+    </object>
+    <object name="Ball" >
+        <renderer>obj\sphere.obj:obj</renderer>
+    </object>
+    
+    <object name="Background" >
+        <renderer>img\bg.jpg</renderer>
+    </object>
+    
+    <object name="BackgroundBox" >
+        <renderer>obj\box.obj:obj</renderer>
+    </object>
+    <object name="CamTest" >
+    </object>
+
+</objects>
