@@ -1,0 +1,42 @@
+Thanks for downloading Awesomium 1.6.5 for Linux 64-bit!
+
+Here's a couple tips for using Awesomium on Linux:
+
+You'll need to define your own scrollbars using CSS, please
+see this support article for more information:
+
+http://support.awesomium.com/kb/general-use/how-do-i-style-custom-scrollbars
+
+To install Awesomium, you'll need to add the shared library to your
+system's library search path. On Ubuntu, you can use the following commands:
+
+    cd awesomium_v1.6.5_sdk_linux32
+    sudo mkdir /usr/lib/awesomium-1.6.5
+    sudo cp -r build/bin/release/* /usr/lib/awesomium-1.6.5
+    sudo ldconfig /usr/lib/awesomium-1.6.5
+
+To link against Awesomium, you should use "-lawesomium-1.6.5", for example:
+
+    g++ main.cpp -lawesomium-1.6.5 -o MyApp
+
+To build the samples, just cd into /samples/projects/linux and run:
+    make all
+
+To build the WebFlow demo, you'll need to install SDL and then, just
+cd into /samples/WebFlow/projects/linux and run:
+    make all
+
+To use Awesomium with Mono/C#, we've included the Mono component of our
+Awesomium.NET library, see wrappers/Awesomium.Mono/README
+
+For more information about Awesomium:
+	http://www.awesomium.com
+
+For help and support:
+	http://support.awesomium.com
+
+For articles and tutorials:
+	http://labs.awesomium.com
+
+Follow us on Twitter: @awesomium
+

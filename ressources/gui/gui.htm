@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+ <style type="text/css">
+    html, body
+    {
+        height: 100%;
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+    }
+    </style>
+    <link rel="stylesheet" href="jqwidgets/jqwidgets/styles/jqx.base.css" type="text/css" />
+    <link rel="stylesheet" href="jqwidgets/jqwidgets/styles/jqx.summer.css" media="screen" />
+    <script type="text/javascript" src="jqwidgets/scripts/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqwidgets/jqxcore.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqwidgets/jqxsplitter.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqwidgets/jqxbuttons.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqwidgets/jqxscrollbar.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqwidgets/jqxpanel.js"></script>
+    <script type="text/javascript" src="jqwidgets/scripts/gettheme.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqwidgets/jqxdata.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqwidgets/jqxtree.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqwidgets/jqxbuttons.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqwidgets/jqxcheckbox.js"></script>
+	
+     <script type="text/javascript">
+         $(document).ready(function () {
+             var theme = 'summer';
+             $('#mainSplitter').jqxSplitter({ height: '100%',width: '100%',theme: theme, panels: [{ size: '33%' }, { size: '33%' }, { size: '33%'}] });
+			 
+			 
+			var data = [            
+			{    "id": "2",
+				"parentid": "1",
+				"text": "Hot Chocolate"
+			}, {
+				"text": "Chocolate Beverage",
+				"id": "1",
+				"parentid": "-1"
+			}, {       
+				"id": "6",
+				"text": "Espresso Beverage",
+				"parentid": "-1"
+			}, {
+				"id": "7",
+				"parentid": "6",
+				"text": "Caffe Americano"
+			}]
+
+			// prepare the data
+			var source =
+			{
+				datatype: "json",
+				datafields: [
+					{ name: 'id' },
+					{ name: 'parentid' },
+					{ name: 'text' }
+				],
+				id: 'id',
+				localdata: data
+			};
+
+			// create data adapter.
+			var dataAdapter = new $.jqx.dataAdapter(source);
+			// perform Data Binding.
+			dataAdapter.dataBind();
+			// get the tree items. The first parameter is the item's id. The second parameter is the parent item's id. The 'items' parameter represents 
+			// the sub items collection name. Each jqxTree item has a 'label' property, but in the JSON data, we have a 'text' field. The last parameter 
+			// specifies the mapping between the 'text' and 'label' fields.  
+			var records = dataAdapter.getRecordsHierarchy('id', 'parentid', 'items', [{name: 'text', map: 'label'}]);
+			$('#jqxWidget').jqxTree({ source: records, width: '100%', theme: theme});
+			$('#jqxWidget').bind('select', function (event) { console.log(event);}); 
+			 
+			$("#jqxButton").jqxButton({theme: theme });
+			$("#jqxButton").bind('click', function () {
+                $('#jqxWidget').jqxTree('addTo', {label:"text"});
+            });
+         });
+    </script>
+	
+</head>
+<body class='default'>
+            <div id="mainSplitter"  style="border: none;">
+                <div class="splitter-panel" style="background-color:#F5FFF2;">
+					<input type="button" value="Add Type" id='jqxButton' style="width:100%;"/>
+					<div id='jqxWidget'></div>
+				</div>
+                <div class="splitter-panel" style="background-color:#EBF1FF;"></div>
+                <div class="splitter-panel" style="background-color:#F5FFF2;"></div>
+            </div>
+</body>
+</html>
