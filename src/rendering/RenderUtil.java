@@ -2,6 +2,8 @@ package rendering;
 
 import javax.media.opengl.GL2;
 
+import com.jogamp.opengl.util.gl2.GLUT;
+
 public class RenderUtil {
 
 	public static void drawRec(float[] bbox, GL2 gl) {
@@ -32,6 +34,20 @@ public class RenderUtil {
 
 	}
 
+	public static void drawSphere(float pos[], float radius, float[] color,
+			GL2 gl, boolean b) {
+		if (color != null)
+			gl.glColor3fv(color, 0);
+		gl.glPushMatrix();
+		gl.glTranslatef(pos[0], pos[1], pos[2]);
+		if (b)
+			RenderUpdater.glut.glutWireSphere(radius, 5, 5);
+		else
+			RenderUpdater.glut.glutSolidSphere(radius, 10, 10);
+		gl.glPopMatrix();
+
+	}
+
 	public static void drawLinedBox(float[] b, GL2 gl) {
 		gl.glVertex3f(b[0], b[2], b[4]);
 		gl.glVertex3f(b[0], b[2], b[5]);
@@ -41,18 +57,23 @@ public class RenderUtil {
 
 		gl.glVertex3f(b[0], b[3], b[5]);
 		gl.glVertex3f(b[1], b[3], b[5]);
-		
+
 		gl.glVertex3f(b[1], b[3], b[5]);
 		gl.glVertex3f(b[1], b[3], b[4]);
-		
+
 		gl.glVertex3f(b[1], b[3], b[4]);
 		gl.glVertex3f(b[1], b[2], b[4]);
-		
 
 		gl.glVertex3f(b[1], b[2], b[4]);
 		gl.glVertex3f(b[0], b[2], b[4]);
 
-		
 	}
 
+	public static void gluPerspective(GL2 gl, double fovY, double aspect,
+			double zNear, double zFar) {
+		double fH = Math.tan(fovY / 360 * Math.PI) * zNear;
+		double fW = fH * aspect;
+		// glu.gluPerspective(fov_y, (float) width / height, ZNear, ZFar);
+		gl.glFrustum(-fW, fW, -fH, fH, zNear, zFar);
+	}
 }

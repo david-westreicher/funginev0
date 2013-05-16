@@ -1,23 +1,16 @@
 package physics;
 
-import game.Game;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Matrix3f;
-import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
+import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
 import util.Log;
-import util.Util;
-import util.Vector;
-import world.Camera;
 import world.GameObject;
 import world.GameObjectType;
 
@@ -25,42 +18,31 @@ import com.bulletphysics.collision.broadphase.AxisSweep3;
 import com.bulletphysics.collision.dispatch.CollisionConfiguration;
 import com.bulletphysics.collision.dispatch.CollisionDispatcher;
 import com.bulletphysics.collision.dispatch.CollisionObject;
+import com.bulletphysics.collision.dispatch.CollisionWorld.LocalRayResult;
 import com.bulletphysics.collision.dispatch.CollisionWorld.RayResultCallback;
 import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
-import com.bulletphysics.collision.dispatch.CollisionWorld.LocalRayResult;
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CapsuleShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
-import com.bulletphysics.dynamics.character.KinematicCharacterController;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.MotionState;
-import com.bulletphysics.linearmath.QuaternionUtil;
 import com.bulletphysics.linearmath.Transform;
 import com.bulletphysics.util.ObjectArrayList;
 
 public class PhysicsTest {
 	public List<LocalRayResult> results = new ArrayList<LocalRayResult>();
-	/**
-	 * @uml.property name="ids"
-	 * @uml.associationEnd 
-	 *                     qualifier="go:world.GameObject com.bulletphysics.dynamics.RigidBody"
-	 */
+
 	public static Map<GameObject, RigidBody> ids = new HashMap<GameObject, RigidBody>();
 	public static final float PHYSICS_SCALE = 1f / 100f;
 	private static PhysicsTest INSTANCE = null;
-	/**
-	 * @uml.property name="dynamicsWorld"
-	 * @uml.associationEnd multiplicity="(1 1)"
-	 */
+
 	private static DiscreteDynamicsWorld dynamicsWorld;
-	/**
-	 * @uml.property name="last"
-	 */
 	private long last;
+	private static Tuple3f tmpVector3f = new Vector3f();
 	private static Quat4f o = new Quat4f();
 	private static AxisAngle4f aa = new AxisAngle4f();
 	private static Transform trans = new Transform();
@@ -247,13 +229,13 @@ public class PhysicsTest {
 	public float rayTest(GameObject go, float rayLength) {
 		Vector3f start = new Vector3f(go.pos);
 		start.scale(PHYSICS_SCALE);
-		Vector rot = new Vector(new float[] { 0, 0, 1 }).rotate(go.rotation);
+		go.rotationMatrix.transform(tmpVector3f);
 		// Vector3f rot = go.getEyeVector();
 		// rot.scale(rayLength);
 		Vector3f end = new Vector3f(go.pos);
 		// end.add(rot);
-		end.add(new Vector3f(rot.v[0] * rayLength, rot.v[1] * rayLength,
-				rot.v[2] * rayLength));
+		end.add(new Vector3f(tmpVector3f.x * rayLength, tmpVector3f.y
+				* rayLength, tmpVector3f.z * rayLength));
 		end.scale(PHYSICS_SCALE);
 
 		results.clear();

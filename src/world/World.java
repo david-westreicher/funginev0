@@ -7,17 +7,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import algorithms.SimplexNoise;
+
+import rendering.ChunkRenderer;
 import rendering.RenderUpdater;
 import util.Log;
 
 public class World {
 	/**
-	 * @uml.property  name="gameObjects"
-	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="world.GameObject"
+	 * @uml.property name="gameObjects"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="world.GameObject"
 	 */
-	private List<GameObject> gameObjects = new ArrayList<GameObject>();
+	public List<GameObject> gameObjects = new ArrayList<GameObject>();
 
 	public World() {
+
 	}
 
 	public void add(GameObject go) {
@@ -32,6 +36,8 @@ public class World {
 		Map<String, List<GameObject>> visibleObjs = new HashMap<String, List<GameObject>>();
 		// TODO add only visibles
 		for (GameObject go : gameObjects) {
+			if (!go.render)
+				continue;
 			List<GameObject> list = visibleObjs.get(go.getType());
 			if (list == null) {
 				list = new ArrayList<GameObject>();
@@ -58,5 +64,11 @@ public class World {
 
 	public int getObjectNum() {
 		return gameObjects.size();
+	}
+
+	public void mark(int i) {
+		for (int k = 0; k < gameObjects.size(); k++) {
+			gameObjects.get(k).marked = k == i;
+		}
 	}
 }

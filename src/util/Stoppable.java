@@ -23,9 +23,10 @@ public class Stoppable extends Thread {
 	}
 
 	public static void stopAll() {
-		Log.log("Stopping all Threads");
+		Log.log(Stoppable.class, "Stopping all Threads");
 		for (Stoppable r : allThreads) {
-			Log.log("Stopping " + r.getClass().getSimpleName());
+			Log.log(Stoppable.class, "Stopping " + r.getClass().getSimpleName()
+					+ ":" + r.toString());
 			r.stopThread();
 		}
 		allThreads.clear();

@@ -4,7 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import world.GameObject;
-import world.Light;
+import world.GameObjectType;
+import world.PointLight;
 
 public class Factory {
 	public static final Factory INSTANCE = new Factory();
@@ -20,9 +21,13 @@ public class Factory {
 	}
 
 	public GameObject createGameObject(String name) {
-		if(name.equals("Light"))
-			return new Light(name);
+		if (name.equals(PointLight.LIGHT_OBJECT_TYPE_NAME))
+			return new PointLight();
 		return new GameObject(name);
+	}
+
+	public VoxelWorld createVoxelWorld(boolean minecraft, int chunkSize) {
+		return new VoxelWorld(minecraft, chunkSize);
 	}
 
 	public Object create(String str) {
@@ -35,23 +40,25 @@ public class Factory {
 		return null;
 	}
 
+	public GameObjectType getObjectType(String str) {
+		return GameObjectType.getType(str);
+	}
+
 	private Object createObject(Class<?> c) {
 		Constructor<?> constructor = null;
+		Object object = null;
 		try {
 			constructor = c.getConstructor();
+			object = constructor.newInstance();
 		} catch (SecurityException e1) {
 			e1.printStackTrace();
 		} catch (NoSuchMethodException e1) {
 			e1.printStackTrace();
-		}
-		Object object = null;
-		try {
-			object = constructor.newInstance();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();

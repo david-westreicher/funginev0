@@ -4,15 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Component<T> {
-	/**
-	 * @uml.property  name="components"
-	 * @uml.associationEnd  multiplicity="(0 -1)" ordering="true" elementType="java.lang.Object" qualifier="name:java.lang.String java.lang.Object"
-	 */
 	private Map<String, T> components = new HashMap<String, T>();
-	/**
-	 * @uml.property  name="parent"
-	 * @uml.associationEnd  
-	 */
 	private Component<?> parent = null;
 
 	public Component() {

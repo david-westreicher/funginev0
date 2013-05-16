@@ -68,7 +68,7 @@ public class VoxelTerrainRenderer extends ModelRenderer {
 		// }
 		// colors.rewind();
 		// normals.rewind();
-		init(vertices, null, null, null);
+		init(vertices, null, null, null, null, null);
 	}
 
 	private float getIntensity(float x, float y, float z) {

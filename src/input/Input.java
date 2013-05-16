@@ -2,20 +2,27 @@ package input;
 
 public class Input {
 
-	/**
-	 * @uml.property  name="mouse"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
 	public Mouse mouse;
-	/**
-	 * @uml.property  name="keyboard"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
 	public KeyBoard keyboard;
+	private JInputWrapper jinput;
 
 	public Input() {
 		mouse = new Mouse();
 		keyboard = new KeyBoard();
+		// jinput = new JInputWrapper();
+	}
+
+	public void update() {
+		if (jinput != null)
+			jinput.update();
+	}
+
+	public float getKey(int player, String name) {
+		return jinput.getKey(player, name);
+	}
+
+	public float getKey(String name) {
+		return getKey(0, name);
 	}
 
 }

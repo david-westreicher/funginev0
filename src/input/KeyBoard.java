@@ -6,10 +6,6 @@ import java.util.List;
 import util.Log;
 
 public class KeyBoard {
-	/**
-	 * @uml.property  name="pressed"
-	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="java.lang.Character"
-	 */
 	private List<Character> pressed = new ArrayList<Character>();
 
 	public void pressed(char keyChar) {

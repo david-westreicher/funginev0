@@ -1,5 +1,7 @@
 package manager;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +32,17 @@ public class ScriptManager extends Manager<GameScript> {
 			ScriptEngineManager manager = new ScriptEngineManager();
 			ScriptEngine engine = manager.getEngineByName("JavaScript");
 			// engine put....
-			engine.put("log", new Log());
+			engine.put("log", Log.getInstance());
 			engine.put("game", Game.INSTANCE);
 			engine.put("factory", Factory.INSTANCE);
 			Compilable compEngine = (Compilable) engine;
-			gs.script = compEngine.compile(IO.read(file));
+			BufferedReader br = IO.read(file);
+			gs.script = compEngine.compile(br);
+			br.close();
 		} catch (ScriptException e) {
 			gs.script = null;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -5,7 +5,10 @@ import game.GameLoop;
 import game.Updatable;
 
 import java.awt.Cursor;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,164 +17,199 @@ import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
-import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.fixedfunc.GLMatrixFunc;
 import javax.media.opengl.glu.GLU;
-import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Quat4f;
+import javax.vecmath.Matrix3f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
+import manager.UberManager;
+import settings.Settings;
 import util.Log;
+import util.Material;
 import util.Util;
-import util.Vector;
+import vr.Rift;
 import world.Camera;
 import world.GameObject;
 import world.GameObjectType;
+import world.PointLight;
+import browser.AwesomiumWrapper;
+import browser.Browser;
 
 import com.jogamp.common.nio.Buffers;
-import com.jogamp.newt.event.awt.AWTAdapter;
+import com.jogamp.opengl.util.awt.Screenshot;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 public class RenderUpdater implements Updatable, GLEventListener {
-	protected List<Integer[]> fobs = new ArrayList<Integer[]>();
+	protected static List<Integer[]> fobs = new ArrayList<Integer[]>();
 	protected static final boolean USE_OBJECT_INTERP = false;
 	protected static final boolean SMOOTHSTEP_INTERP = false;
-	protected static final float ZFAR_DISTANCE = 50000;// TODO changed from 5000
-	protected static final float ZNEAR = 100;
+	public static float ZFAR_DISTANCE = 100;// TODO changed from 5000
+	protected static final float ZNEAR = 0.01f;
+	protected static final float DEBUG_SIZE = 250f;
+	public static float EYE_GAP = 0.23f;
 	public static float ZFar;
 	public static float ZNear;
-	public static double FOV_Y = 60;
-	/**
-	 * @uml.property name="canvas"
-	 * @uml.associationEnd multiplicity="(1 1)"
-	 */
-	public GLCanvas canvas;
-	/**
-	 * @uml.property name="renderer"
-	 * @uml.associationEnd multiplicity="(1 1)"
-	 */
+	public static double FOV_Y = 111;
 	private OpenGLRendering renderer;
 	public static GL2 gl;
 	public static GLUT glut = new GLUT();
-	public static GLU glu = new GLU();
-	/**
-	 * @uml.property name="interp"
-	 */
-	protected float interp;
-	private static Quat4f interpolationQuat = new Quat4f();
-	private static AxisAngle4f interpolationAxisAngle = new AxisAngle4f();
-	/**
-	 * @uml.property name="renderStrings"
-	 */
+	public final static GLU glu = new GLU();
+	protected static float interp;
+	private static Vector3f tmpVector3f = new Vector3f();
+	private static Vector3f tmp2Vector3f = new Vector3f();
 	protected List<String> renderStrings = new ArrayList<String>();
-	/**
-	 * @uml.property name="hiddenCursor"
-	 */
 	private Cursor hiddenCursor;
 	public static GameObject cgo = null;
-	// public float z = 499;
-	/**
-	 * @uml.property name="width"
-	 */
 	public int width;
-	/**
-	 * @uml.property name="height"
-	 */
 	public int height;
-	/**
-	 * @uml.property name="renderObjs"
-	 * @uml.associationEnd multiplicity="(0 -1)" ordering="true"
-	 *                     elementType="world.GameObject" qualifier=
-	 *                     "constant:java.lang.String java.util.List"
-	 */
 	protected Map<String, List<GameObject>> renderObjs;
-	/**
-	 * @uml.property name="cam"
-	 * @uml.associationEnd multiplicity="(1 1)"
-	 */
 	protected Camera cam = Game.INSTANCE.cam;
 	private List<String> excludedGameObjects = new ArrayList<String>();
-	private BerkeliumWrapper berk;
-	private static List<Runnable> runnables = new ArrayList<Runnable>();
+	private float debugAngle;
+	public static Browser browser = new AwesomiumWrapper();
+	private static List<Runnable> queue = new ArrayList<Runnable>();
+	private static List<Runnable> contextExecutions = new ArrayList<Runnable>();
+	public RenderState renderState = new RenderState();
+	private float[] projectionMatrix = new float[16];
+	private float[] modelViewMatrix = new float[16];
+	private Point3f p = new Point3f(0, 0, 0);
+	private Matrix4f modelView = new Matrix4f();
+	private Matrix4f projection = new Matrix4f();
+	private boolean takeScreen = false;
 
 	public RenderUpdater() {
 		renderer = new OpenGLRendering(this);
-		canvas = renderer.getCanvas();
 		hiddenCursor = Util.getHiddenCursor();
 	}
 
 	@Override
 	public void update(float interp) {
 		this.interp = interp;
-		canvas.display();
+		renderer.display();
+	}
+
+	public void setFOV(double fov) {
+		FOV_Y = fov;
+		executeInOpenGLContext(new Runnable() {
+
+			@Override
+			public void run() {
+				RenderUpdater.this.setProjection(width, height);
+			}
+		});
 	}
 
 	@Override
 	public void display(GLAutoDrawable arg0) {
 		gl = arg0.getGL().getGL2();
-
-		synchronized (runnables) {
-			if (runnables.size() > 0) {
-				for (Runnable r : runnables)
-					r.run();
-				runnables.clear();
+		synchronized (queue) {
+			if (queue.size() > 0) {
+				queue.remove(0).run();
 			}
 		}
+		synchronized (contextExecutions) {
+			for (Runnable r : contextExecutions) {
+				r.run();
+			}
+			contextExecutions.clear();
+		}
+		// long startTime = 0;
+		// if(Game.INSTANCE.loop.tick%60==0)
+		// startTime = System.nanoTime();
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+		// if(Game.INSTANCE.loop.tick%60==0)
+		// Log.log(this, System.nanoTime() - startTime);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 
 		// renderOBJECTS
+
 		if (!Game.INSTANCE.loop.isPausing()) {
 			renderObjs = Game.INSTANCE.world.getVisibleObjects();
 			gl.glEnable(GL2.GL_DEPTH_TEST);
-
 			// CAMERA
-			setupLook(cam);
-
-			// popMatrix
-			renderObjects();
-
-			gl.glDisable(GL2.GL_DEPTH_TEST);
-			if (Game.DEBUG) {
-				renderDebug();
+			if (Settings.STEREO) {
+				if (Settings.VR) {
+					cam.setRotation(Game.vr.getRotation());
+					cam.setRotation(Game.vr.getMatrix());
+				}
+				gl.glTranslatef(Rift.getDip(), 0, 0);
+				setProjection(width, height, Rift.getFOV(), Rift.getH());
+				setupLook(cam, Settings.VR ? Game.vr.getMatrix()
+						: cam.rotationMatrix);
+				renderObjects();
+				renderState.stereo = true;
+				gl.glLoadIdentity();
+				gl.glTranslatef(-Rift.getDip(), 0, 0);
+				setProjection(width, height, Rift.getFOV(), -Rift.getH());
+				setupLook(cam, Settings.VR ? Game.vr.getMatrix()
+						: cam.rotationMatrix);
+				renderObjects();
+				renderState.stereo = false;
+			} else {
+				setupLook(cam);
+				renderObjects();
 			}
 
-			startOrthoRender();
-			renderCrosshair();
-			berk.render(gl);
-			renderText();
-			endOrthoRender();
-		}
-		// gl.glFlush();
-		// arg0.swapBuffers();
-	}
+			if (takeScreen) {
+				Log.log(this, "taking screenshot");
+				try {
+					Screenshot.writeToFile(Util.generateScreenshotFile(),
+							Settings.STEREO ? width * 2 : width, height);
+				} catch (GLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				takeScreen = false;
+			}
 
-	private void renderCrosshair() {
-		gl.glPushMatrix();
-		gl.glColor3f(1, 0, 0);
-		gl.glBegin(GL2.GL_LINES);
-		int[] mousePos = Game.INSTANCE.input.mouse.pos;
-		gl.glVertex2i(width / 2, height / 2 - 5);
-		gl.glVertex2i(width / 2, height / 2 + 5);
-		gl.glEnd();
-		gl.glPopMatrix();
+			gl.glDisable(GL2.GL_DEPTH_TEST);
+			if (Game.DEBUG || !Settings.SHOW_STATUS)
+				renderDebug();
+
+		}
+
+		startOrthoRender(Settings.STEREO);
+		if (Settings.STEREO)
+			gl.glViewport(0, 0, width * 2, height);
+
+		if (Settings.USE_BERKELIUM)
+			browser.render(gl);
+		// renderCrosshair();
+		if (!Settings.SHOW_STATUS)
+			renderText();
+
+		if (Settings.STEREO)
+			gl.glViewport(0, 0, width, height);
+		endOrthoRender();
+
+		gl.glFlush();
+		// arg0.swapBuffers();
 	}
 
 	protected void setupLook(GameObject go) {
 		float pos[] = interp(go.pos, go.oldPos, interp);
-		// float rot[] = interp(go.rotation, go.oldRotation, interp);
-		setupLook(pos, go.rotation);
-		// Vector3f eyeVec = go.getEyeVector();
-		// glu.gluLookAt(pos[0], pos[1], pos[2], pos[0] + eyeVec.x, pos[1] +
-		// eyeVec.y,
-		// pos[2] + eyeVec.z, 0, 1, 0);
+		setupLook(pos, go.rotationMatrix);
 	}
 
-	protected void setupLook(float[] pos, float[] rot) {
-		Vector m = new Vector(new float[] { 0, 0, 1 }).rotate(rot);
-		glu.gluLookAt(pos[0], pos[1], pos[2], pos[0] + m.v[0], pos[1] + m.v[1],
-				pos[2] + m.v[2], 0, 1, 0);
+	protected void setupLook(GameObject go, Matrix3f rot) {
+		float pos[] = interp(go.pos, go.oldPos, interp);
+		setupLook(pos, rot);
+	}
+
+	protected void setupLook(float[] pos, Matrix3f rotationMatrix) {
+		tmpVector3f.set(0, 0, -1);
+		tmp2Vector3f.set(0, 1, 0);
+		rotationMatrix.transform(tmpVector3f);
+		rotationMatrix.transform(tmp2Vector3f);
+		glu.gluLookAt(pos[0], pos[1], pos[2], pos[0] + tmpVector3f.x, pos[1]
+				+ tmpVector3f.y, pos[2] + tmpVector3f.z, tmp2Vector3f.x,
+				tmp2Vector3f.y, tmp2Vector3f.z);
 	}
 
 	private float[] interp(float[] pos, float[] oldPos, float interp) {
@@ -190,14 +228,28 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 	}
 
-	protected void startOrthoRender() {
+	protected void startOrthoRender(boolean stereo) {
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
-		glu.gluOrtho2D(0, width, height, 0);
+		glu.gluOrtho2D(0, width * (stereo ? 2 : 1), height, 0);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
+	}
+
+	protected void startOrthoRenderOffset() {
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+		glu.gluOrtho2D(width, width * 2, height, 0);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+	}
+
+	protected void startOrthoRender() {
+		startOrthoRender(false);
 	}
 
 	private void renderText() {
@@ -205,16 +257,23 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		gl.glColor3f(1, 0, 0);
 		GameLoop loop = Game.INSTANCE.loop;
 		// text
+		renderStrings.add("Textures to load:  "
+				+ UberManager.getTexturesToLoad());
+		renderStrings.add("Process Queue   :  " + queue.size());
 		renderStrings.add("Render-FPS: "
 				+ Util.roundDigits(loop.currentFPS.fps, 1));
 		renderStrings.add("Tick-FPS  :  "
 				+ Util.roundDigits(loop.currentTick.fps, 1));
 		renderStrings.add("TpT       :  " + loop.timePerTick + "ms");
 		renderStrings.add("#Objects  :  " + Game.INSTANCE.world.getObjectNum());
-		renderStrings.add("Zoom      :  " + Util.roundDigits(cam.zoom, 2));
+		renderStrings.add("#Chunks   :  " + VoxelWorldRenderer.VISIBLE_CHUNKS);
+		if (!browser.isDummy())
+			renderStrings.add("BerkFPS   :  "
+					+ Util.roundDigits(browser.getFPS(), 1));
+
 		int i = 1;
 		for (String s : renderStrings) {
-			gl.glRasterPos2f(0, 15 * i++);
+			gl.glRasterPos2f(width * (Settings.STEREO ? 2 : 1) - 200, 15 * i++);
 			glut.glutBitmapString(GLUT.BITMAP_8_BY_13, s);
 		}
 		renderStrings.clear();
@@ -224,13 +283,74 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		// bboxes
 		gl.glColor4f(0.5f, 0.5f, 0.5f, 1);
 		// gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-		gl.glBegin(GL2.GL_LINES);
 		for (List<GameObject> list : renderObjs.values()) {
 			for (GameObject go : list) {
-				RenderUtil.drawLinedBox(go.bbox, gl);
+				if ((Game.DEBUG || go.marked)) {
+					gl.glColor3fv(go.color, 0);
+					gl.glBegin(GL2.GL_LINES);
+					RenderUtil.drawLinedBox(go.bbox, gl);
+					gl.glEnd();
+					if (go instanceof PointLight) {
+						PointLight l = (PointLight) go;
+						RenderUtil.drawSphere(go.pos, l.radius, l.color, gl,
+								true);
+					}
+					// draw wireframe of object into center
+					debugAngle += 0.01f;
+					startOrthoRender();
+					gl.glPushMatrix();
+					gl.glTranslatef(400, DEBUG_SIZE / 2, 0);
+					gl.glScalef(DEBUG_SIZE, -DEBUG_SIZE, 1);
+					gl.glRotatef(debugAngle, 0, 1, 0);
+					GameObjectRenderer objectRenderer = GameObjectType
+							.getType(go.getType()).renderer;
+					if (objectRenderer == null)
+						return;
+					gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+					objectRenderer.drawSimple(gl);
+					gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
+					gl.glPopMatrix();
+					gl.glPushMatrix();
+					List<Material> mats = objectRenderer.getMaterials();
+					gl.glColor4f(1, 1, 1, 1);
+					gl.glDisable(GL2.GL_CULL_FACE);
+					gl.glEnable(GL2.GL_TEXTURE_2D);
+					gl.glTranslatef(400, DEBUG_SIZE / 2, 0);
+					if (mats != null && mats.size() > 0) {
+						for (int i = 0; i < Math.min(3, mats.size()); i++) {
+							Material mat = mats.get(i);
+							if (mat != null) {
+								if (mat.texture != null) {
+									gl.glTranslatef(DEBUG_SIZE, 0, 0);
+									Util.drawTexture(gl, mat.texture,
+											DEBUG_SIZE / 2, DEBUG_SIZE / 2);
+								}
+								if (mat.normalMap != null) {
+									gl.glTranslatef(DEBUG_SIZE, 0, 0);
+									Util.drawTexture(gl, mat.normalMap,
+											DEBUG_SIZE / 2, DEBUG_SIZE / 2);
+								}
+							}
+						}
+					}
+					gl.glDisable(GL2.GL_TEXTURE_2D);
+					gl.glEnable(GL2.GL_CULL_FACE);
+					gl.glPopMatrix();
+					endOrthoRender();
+				}
 			}
 		}
-		gl.glEnd();
+
+		/*
+		 * for (List<GameObject> list : renderObjs.values()) { for (GameObject
+		 * go : list) { Point3f pos = project(go.pos); if
+		 * (isLegitProjection(go.pos, cam)) { gl.glPushMatrix();
+		 * gl.glTranslatef(pos.x, pos.y, 0); gl.glScalef(20, 20, 1);
+		 * gl.glColor4f(1, 0, 0, 1); gl.glBegin(GL2.GL_LINE_LOOP); {
+		 * gl.glVertex3f(-1, -1, 0); gl.glVertex3f(1, -1, 0); gl.glVertex3f(1,
+		 * 1, 0); gl.glVertex3f(-1, 1, 0); } gl.glEnd(); gl.glPopMatrix(); } } }
+		 * endOrthoRender();
+		 */
 		/*
 		 * int num = 50; int size = 100; gl.glPushMatrix(); {
 		 * gl.glTranslatef(-num * size / 2, 0, -num * size / 2);
@@ -243,13 +363,13 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		{
 			gl.glColor4f(1, 0, 0, 1);
 			gl.glVertex3f(0, 0, 0);
-			gl.glVertex3f(100, 0, 0);
+			gl.glVertex3f(1, 0, 0);
 			gl.glColor4f(0, 1, 0, 1);
 			gl.glVertex3f(0, 0, 0);
-			gl.glVertex3f(0, 100, 0);
+			gl.glVertex3f(0, 1, 0);
 			gl.glColor4f(0, 0, 1, 1);
 			gl.glVertex3f(0, 0, 0);
-			gl.glVertex3f(0, 0, 100);
+			gl.glVertex3f(0, 0, 1);
 		}
 		gl.glEnd();
 		// gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
@@ -264,37 +384,65 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		 */
 	}
 
-	protected void renderObjects(String type) {
+	private void saveModelViewProjectionMatrix() {
+		gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, modelViewMatrix, 0);
+		gl.glGetFloatv(GLMatrixFunc.GL_PROJECTION_MATRIX, projectionMatrix, 0);
+		modelView.set(modelViewMatrix);
+		projection.set(projectionMatrix);
+		modelView.transpose();
+		projection.transpose();
+	}
+
+	private boolean isLegitProjection(float[] pos, Camera cam) {
+		tmpVector3f.set(pos);
+		tmp2Vector3f.set(cam.pos);
+		tmpVector3f.sub(tmp2Vector3f);
+		tmp2Vector3f.set(0, 0, -1);
+		cam.rotationMatrix.transform(tmp2Vector3f);
+		return tmpVector3f.dot(tmp2Vector3f) > 0;
+	}
+
+	private Point3f project(float[] point) {
+		p.set(point);
+		modelView.transform(p);
+		projection.transform(p);
+		p.x = (p.x / p.z + 1) * width / 2;
+		p.y = (1 - p.y / p.z) * height / 2;
+		return p;
+	}
+
+	protected void renderObjects(String type,
+			Map<String, List<GameObject>> renderObjs) {
 		GameObjectType goType = GameObjectType.getType(type);
 		if (goType == null)
 			return;
 		GameObjectRenderer renderer = goType.renderer;
 		if (renderer == null)
 			return;
-		renderer.init(gl);
 		List<GameObject> objs = renderObjs.get(type);
-		if (objs != null)
+		if (objs != null) {
+			renderer.init(gl);
 			if (renderer.isSimple())
 				renderer.draw(gl, objs, interp);
 			else
 				for (GameObject go : objs) {
 					cgo = go;
-					gl.glPushMatrix();
-					transform(goType, go);
-
-					gl.glMatrixMode(GL.GL_TEXTURE);
-					gl.glActiveTexture(GL.GL_TEXTURE7);
-					gl.glPushMatrix();
-					transform(goType, go);
-					gl.glActiveTexture(GL.GL_TEXTURE0);
-
+					/*
+					 * gl.glPushMatrix(); transform(goType, go);
+					 * 
+					 * gl.glMatrixMode(GL.GL_TEXTURE);
+					 * gl.glActiveTexture(GL.GL_TEXTURE7); gl.glPushMatrix();
+					 * transform(goType, go);
+					 * gl.glActiveTexture(GL.GL_TEXTURE0);
+					 */
 					renderer.draw(gl);
-
-					gl.glPopMatrix();
-					gl.glMatrixMode(GL2.GL_MODELVIEW);
-					gl.glPopMatrix();
+					/*
+					 * gl.glPopMatrix(); gl.glMatrixMode(GL2.GL_MODELVIEW);
+					 * gl.glPopMatrix();
+					 */
 				}
-		renderer.end(gl);
+			renderer.end(gl);
+		}
 	}
 
 	private void transform(GameObjectType goType, GameObject go) {
@@ -337,52 +485,46 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		return (float) (f * 180 / Math.PI);
 	}
 
-	protected void renderObjects() {
+	protected void renderObjects(boolean depthOnly) {
+		renderState.depthOnly = depthOnly;
+		if (depthOnly) {
+			gl.glColorMask(false, false, false, false);
+		}
 		// render this shit
+		renderObjects(renderObjs);
+
+		if (depthOnly)
+			gl.glColorMask(true, true, true, true);
+		renderState.depthOnly = false;
+	}
+
+	public void renderObjects(Map<String, List<GameObject>> renderObjs) {
 		for (String type : renderObjs.keySet()) {
 			if (!excludedGameObjects.contains(type))
-				renderObjects(type);
+				renderObjects(type, renderObjs);
 		}
+	}
 
+	protected void renderObjects() {
+		renderObjects(false);
 	}
 
 	@Override
 	public void dispose(GLAutoDrawable arg0) {
 		gl = arg0.getGL().getGL2();
-		berk.dispose(gl);
+		Log.log(this, "gl dispose");
 	}
 
 	@Override
 	public void init(GLAutoDrawable arg0) {
-		System.out.print("The following GL Versions are available: ");
-		try {
-			arg0.getGL().getGL();
-			System.out.print("GL, ");
-			arg0.getGL().getGL2();
-			System.out.print("GL2, ");
-			arg0.getGL().getGL2ES1();
-			System.out.print("GL2ES1, ");
-			arg0.getGL().getGL2ES2();
-			System.out.print("GL2ES2, ");
-			arg0.getGL().getGL2GL3();
-			System.out.print("GL2ES3, ");
-			arg0.getGL().getGL3();
-			System.out.print("GL3, ");
-			arg0.getGL().getGL3bc();
-			System.out.print("GL3bc, ");
-			arg0.getGL().getGL4();
-			System.out.print("GL4, ");
-			arg0.getGL().getGL4bc();
-			System.out.print("GL4bc, ");
-			arg0.getGL().getGLES1();
-			System.out.print("GLES1, ");
-			arg0.getGL().getGLES2();
-			System.out.print("GLES2, ");
-		} catch (GLException e) {
-			System.out.println();
-		}
 		gl = arg0.getGL().getGL2();
-		gl.glClearColor(0, 0, 0, 1);
+		Log.log(this, "dimensions: " + width, height);
+		Log.log(this,
+				"GL_ARB_gpu_shader5: "
+						+ (gl.isExtensionAvailable("GL_ARB_gpu_shader5") ? "available"
+								: "missing"));
+
+		gl.glClearColor(0, 0, 0, 0);
 		gl.glEnable(GL2.GL_LINE_SMOOTH);
 		gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
@@ -393,29 +535,33 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		gl.glFrontFace(GL2.GL_CCW);
 		gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glCullFace(GL2.GL_BACK);
-
 		// point cloud rendering
 		// gl.glEnable(GL2.GL_POINT_SMOOTH);
 		gl.glEnable(GL2.GL_VERTEX_PROGRAM_POINT_SIZE);
 		gl.glPointSize(10);
-
+		UberManager.initializeShaders();
 	}
 
 	public void setProjection(int width, int height) {
-		setProjection(width, height, FOV_Y);
+		setProjection(width, height, FOV_Y, 0);
 	}
 
-	public void setProjection(int width, int height, double fov_y) {
+	public void setProjection(int width, int height, double fov_y,
+			float translation) {
 		this.width = width;
 		this.height = height;
-		float z = ((float) height / 2)
-				/ (float) Math.tan(fov_y * Math.PI / 360);
-		gl.glViewport(0, 0, width, height);
-		float zoom = Game.INSTANCE.cam.zoom * z;
+		// float z = ((float) height / 2)
+		// / (float) Math.tan(fov_y * Math.PI / 360);
+		// float zoom = Game.INSTANCE.cam.zoom * z;
+		// TODO maybe need gl.glViewport(0, 0, width, height);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		ZNear = ZNEAR;// Math.max(zoom - 500, 0);
-		ZFar = zoom + ZFAR_DISTANCE;
+		ZFar = ZNEAR + ZFAR_DISTANCE;
+		// RenderUtil.gluPerspective(gl, fov_y, (float) width / height, ZNear,
+		// ZFar);
+		if (translation != 0)
+			gl.glTranslatef(translation, 0, 0);
 		glu.gluPerspective(fov_y, (float) width / height, ZNear, ZFar);
 		// gl.glScalef(1, -1, 1);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -424,19 +570,27 @@ public class RenderUpdater implements Updatable, GLEventListener {
 	@Override
 	public void reshape(GLAutoDrawable arg0, int x, int y, int width, int height) {
 		gl = arg0.getGL().getGL2();
-		berk = new BerkeliumWrapper(width, height);
 		Log.log(this, "reshape:[" + width + "," + height + "]");
-		setProjection(width, height);
+		setProjection(width / (Settings.STEREO ? 2 : 1), height);
 	}
 
 	@Override
 	public void dispose() {
+		Log.log(this, "dispose");
+		browser.dispose(gl);
+		glu.destroy();
 		renderer.dispose();
 	}
 
 	public synchronized static void executeInOpenGLContext(Runnable runnable) {
-		synchronized (runnables) {
-			runnables.add(runnable);
+		synchronized (contextExecutions) {
+			contextExecutions.add(runnable);
+		}
+	}
+
+	public synchronized static void queue(Runnable runnable) {
+		synchronized (queue) {
+			queue.add(runnable);
 		}
 	}
 
@@ -453,13 +607,6 @@ public class RenderUpdater implements Updatable, GLEventListener {
 				c.returnVar(num);
 			}
 		});
-	}
-
-	public void hideCursor(boolean hide) {
-		if (hide)
-			canvas.setCursor(hiddenCursor);
-		else
-			canvas.setCursor(Cursor.getDefaultCursor());
 	}
 
 	protected void setUpTranslate(GameObject go, float zOrdering) {
@@ -483,23 +630,27 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		excludedGameObjects.add(string);
 	}
 
+	public void includeGameObjectFromRendering(String lightObjectTypeName) {
+		excludedGameObjects.remove(lightObjectTypeName);
+	}
+
 	public void renderExcludedObjects() {
-		for (String type : excludedGameObjects)
-			this.renderObjects(type);
+		for (String type : excludedGameObjects) {
+			this.renderObjects(type, renderObjs);
+		}
 	}
 
 	protected void createTex(int fobNum, int width, int height) {
 		int[] fboId = new int[1];
 		int[] texId = new int[1];
-		int[] depId = new int[1];
+		// int[] depId = new int[1];
 		gl.glGenFramebuffers(1, fboId, 0);
 		gl.glGenTextures(1, texId, 0);
-		gl.glGenRenderbuffers(1, depId, 0);
+		// gl.glGenRenderbuffers(1, depId, 0);
 
-		gl.glBindRenderbuffer(GL2.GL_RENDERBUFFER, depId[0]);
-		gl.glRenderbufferStorage(GL2.GL_RENDERBUFFER, GL2.GL_DEPTH_COMPONENT,
-				width, height);
-		;
+		// gl.glBindRenderbuffer(GL2.GL_RENDERBUFFER, depId[0]);
+		// gl.glRenderbufferStorage(GL2.GL_RENDERBUFFER, GL2.GL_DEPTH_COMPONENT,
+		// width, height);
 
 		gl.glBindTexture(GL.GL_TEXTURE_2D, texId[0]);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
@@ -515,11 +666,11 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, fboId[0]);
 		gl.glFramebufferTexture2D(GL2.GL_FRAMEBUFFER, GL2.GL_COLOR_ATTACHMENT0,
 				GL.GL_TEXTURE_2D, texId[0], 0);
-		gl.glFramebufferRenderbuffer(GL2.GL_FRAMEBUFFER,
-				GL2.GL_DEPTH_ATTACHMENT, GL2.GL_RENDERBUFFER, depId[0]);
+		// gl.glFramebufferRenderbuffer(GL2.GL_FRAMEBUFFER,
+		// GL2.GL_DEPTH_ATTACHMENT, GL2.GL_RENDERBUFFER, depId[0]);
 
 		gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-		Integer[] fob = new Integer[] { texId[0], fboId[0], depId[0] };
+		Integer[] fob = new Integer[] { texId[0], fboId[0] };
 		if (fobs.size() < fobNum)
 			fobs.set(fobNum, fob);
 		else
@@ -534,7 +685,7 @@ public class RenderUpdater implements Updatable, GLEventListener {
 	}
 
 	protected void createTex(int fobNum) {
-		createTex(fobNum, width, height);
+		createTex(fobNum, Settings.WIDTH, Settings.HEIGHT);
 	}
 
 	protected void createShadowFob(int fobNum, int width, int height) {
@@ -544,13 +695,16 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		gl.glGenTextures(1, texId, 0);
 
 		gl.glBindTexture(GL.GL_TEXTURE_2D, texId[0]);
-		// new line
-		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_DEPTH_TEXTURE_MODE,
-				GL2.GL_LUMINANCE);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 				GL.GL_LINEAR);// before:GL_NEAREST
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-				GL.GL_NEAREST);
+				GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_TEXTURE_COMPARE_MODE,
+				GL2.GL_COMPARE_R_TO_TEXTURE);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_TEXTURE_COMPARE_FUNC,
+				GL.GL_LEQUAL);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_DEPTH_TEXTURE_MODE,
+				GL2.GL_INTENSITY);
 		gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
 		gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
 
@@ -580,4 +734,95 @@ public class RenderUpdater implements Updatable, GLEventListener {
 			throw new IllegalStateException("Frame Buffer Oject not created.");
 		}
 	}
+
+	protected Texture createCubeMap(String img) {
+		gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		Texture cubeMapTex = TextureIO.newTexture(GL.GL_TEXTURE_CUBE_MAP);
+		String[] shortCuts = new String[] { "east.bmp", "west.bmp", "up.bmp",
+				"down.bmp", "north.bmp", "south.bmp" };
+		// String[] shortCuts = new String[] { "r.jpg", "l.jpg", "u.jpg",
+		// "d.jpg",
+		// "f.jpg", "b.jpg" };
+		// String[] shortCuts = new String[] { "+Z.tga", "-Z.tga", "+Y.tga",
+		// "-Y.tga", "+X.tga", "-X.tga" };
+		Log.log(this, "create cubemap: " + img);
+		try {
+			cubeMapTex.updateImage(
+					gl,
+					TextureIO.newTextureData(gl.getGLProfile(), new File(img
+							+ shortCuts[0]), false, null),
+					GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X);
+			cubeMapTex.updateImage(
+					gl,
+					TextureIO.newTextureData(gl.getGLProfile(), new File(img
+							+ shortCuts[1]), false, null),
+					GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
+			cubeMapTex.updateImage(
+					gl,
+					TextureIO.newTextureData(gl.getGLProfile(), new File(img
+							+ shortCuts[2]), false, null),
+					GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
+			cubeMapTex.updateImage(
+					gl,
+					TextureIO.newTextureData(gl.getGLProfile(), new File(img
+							+ shortCuts[3]), false, null),
+					GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
+			cubeMapTex.updateImage(
+					gl,
+					TextureIO.newTextureData(gl.getGLProfile(), new File(img
+							+ shortCuts[4]), false, null),
+					GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
+			cubeMapTex.updateImage(
+					gl,
+					TextureIO.newTextureData(gl.getGLProfile(), new File(img
+							+ shortCuts[5]), false, null),
+					GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+			return cubeMapTex;
+		} catch (GLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Map<String, Object> getSettings() {
+		Map<String, Object> settings = new HashMap<String, Object>();
+		settings.put("isWireframe", Game.WIREFRAME);
+		settings.put("isdDebug", DeferredRenderer.DEBUG);
+		settings.put("isDepthFirst", DeferredRenderer.DEPTH_FIRST);
+		settings.put("isDof", DeferredRenderer.DOF);
+		settings.put("isSSAO", DeferredRenderer.SSAO);
+		settings.put("blur", DeferredRenderer.BLUR);
+		settings.put("ambient", DeferredRenderer.AMBIENT);
+		settings.put("tFPS", GameLoop.TICKS_PER_SECOND);
+		settings.put("ssao", DeferredRenderer.SSAO_STRENGTH);
+		settings.put("fov", FOV_Y);
+		settings.put("eyegap", EYE_GAP);
+		return settings;
+	}
+
+	public void initShaderUniforms() {
+	}
+
+	public void endShaderUniforms() {
+	}
+
+	public static Browser getBrowser() {
+		return browser;
+	}
+	/*
+	 * private Vector3f computeTranslation(Camera cam, float size) {
+	 * tmpVector3f.set(size, 0, 0); cam.rotationMatrix.transform(tmpVector3f);
+	 * return (Vector3f) tmpVector3f.clone(); }
+	 * 
+	 * private void translate(Camera cam, Vector3f translation) { cam.pos[0] +=
+	 * translation.x; cam.pos[1] += translation.y; cam.pos[2] += translation.z;
+	 * cam.oldPos[0] += translation.x; cam.oldPos[1] += translation.y;
+	 * cam.oldPos[2] += translation.z; }
+	 * 
+	 * private void renderCrosshair() { gl.glColor3f(1, 0, 0);
+	 * gl.glBegin(GL2.GL_LINES); gl.glVertex2i(width / 2, height / 2 - 5);
+	 * gl.glVertex2i(width / 2, height / 2 + 5); gl.glEnd(); }
+	 */
 }

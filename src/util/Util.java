@@ -1,8 +1,6 @@
 package util;
 
 import game.Game;
-import game.GameLoop;
-
 import input.CanvasListener;
 
 import java.awt.Color;
@@ -10,44 +8,34 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.DisplayMode;
-import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.GregorianCalendar;
 
+import javax.media.opengl.GL2;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.text.DateFormatter;
 import javax.vecmath.Matrix3f;
 
-import com.jogamp.opengl.util.texture.Texture;
-
-import rendering.DOFRenderer;
-import rendering.RenderUpdater;
-import rendering.ShadowMapRenderer;
-import rendering.TerrainRenderer;
+import manager.UberManager;
 import settings.Settings;
-import world.GameObjectType;
+
+import com.jogamp.opengl.util.texture.Texture;
 
 public class Util {
 
 	public static JFrame frame;
-	public static Component c;
+	private static float[] eyeVector = new float[3];
 
 	public static void sleep(long l) {
 		try {
@@ -57,203 +45,55 @@ public class Util {
 		}
 	}
 
-	public static Frame createFrame(Component comp) {
+	public static JFrame createFrame() {
 		// TODO fullscreen :D
 		frame = new JFrame("Engine Test");
-		c = comp;
-		Container pane = frame.getContentPane();
-		pane.setLayout(new BoxLayout(pane, BoxLayout.X_AXIS));
-		c.setMaximumSize(new Dimension(Settings.WIDTH, Settings.HEIGHT));
-		c.setMinimumSize(new Dimension(Settings.WIDTH, Settings.HEIGHT));
-		pane.add(c);
-		JPanel optionsPanel = new JPanel();
-		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
-		optionsPanel.setMinimumSize(new Dimension(200, Settings.HEIGHT));
-		optionsPanel.setMaximumSize(new Dimension(200, Settings.HEIGHT));
-		pane.add(optionsPanel);
 
-		final JButton button = new JButton();
-		button.setText(Game.INSTANCE.loop.isPaused() ? "Continue" : "Pause");
-		button.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(button);
-		button.addActionListener(new ActionListener() {
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getDefaultScreenDevice();
+		if (Settings.USE_FULL_SCREEN && gd.isFullScreenSupported()) {
+			Log.log(Util.class, "fullscreen supported");
+			frame.setUndecorated(true);
+			gd.setFullScreenWindow(frame);
+		} else {
+			// frame.setSize((Settings.STEREO ? Settings.WIDTH * 2
+			// : Settings.WIDTH) + 20, Settings.HEIGHT + 40);
+			frame.setLocationRelativeTo(null);
+			frame.setResizable(true);
+		}
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (button.getText().equals("Pause")) {
-					Game.INSTANCE.loop.pauseLogic();
-					button.setText("Continue");
-				} else {
-					Game.INSTANCE.loop.continueLogic();
-					button.setText("Pause");
-				}
-			}
-		});
-
-		final JButton buttonr = new JButton("Restart");
-		buttonr.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(buttonr);
-		buttonr.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Game.INSTANCE.restart();
-			}
-		});
-
-		final JCheckBox debug = new JCheckBox("Debug");
-		debug.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(debug);
-		debug.setSelected(Game.DEBUG);
-		debug.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Game.DEBUG = debug.isSelected();
-			}
-		});
-
-		final JCheckBox wire = new JCheckBox("Wireframe");
-		wire.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(wire);
-		wire.setSelected(Game.WIREFRAME);
-		wire.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Game.WIREFRAME = wire.isSelected();
-			}
-		});
-
-		final JSlider slider = new JSlider();
-		slider.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(slider);
-		slider.setMinimum(1);
-		slider.setValue(GameLoop.TICKS_PER_SECOND);
-		slider.setMaximum(100);
-		slider.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Game.INSTANCE.loop.setFPS(slider.getValue());
-			}
-		});
-
-		final JSlider sl = new JSlider();
-		sl.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(sl);
-		sl.setMinimum(0);
-		sl.setValue((int) Game.INSTANCE.cam.focus);
-		sl.setMaximum(100);
-		sl.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Game.INSTANCE.cam.focus = (float) sl.getValue() / 100;
-			}
-		});
-
-		final JCheckBox pp = new JCheckBox("Postprocess");
-		pp.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(pp);
-		pp.setSelected(DOFRenderer.POST_PROCESS);
-		sl.setEnabled(DOFRenderer.POST_PROCESS);
-		pp.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				DOFRenderer.POST_PROCESS = pp.isSelected();
-				sl.setEnabled(DOFRenderer.POST_PROCESS);
-			}
-		});
-
-		final JSlider fovSlider = new JSlider();
-		fovSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(fovSlider);
-		fovSlider.setMinimum(1);
-		fovSlider.setValue((int) ShadowMapRenderer.FOV);
-		fovSlider.setMaximum(180);
-		fovSlider.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				ShadowMapRenderer.FOV = fovSlider.getValue();
-			}
-		});
-
-		final JButton terrain = new JButton("Generate Terrain");
-		terrain.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(terrain);
-		terrain.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				((TerrainRenderer) GameObjectType.getType("Terrain").renderer)
-						.generate();
-			}
-		});
-
-		final JSlider noisSlider = new JSlider();
-		noisSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(noisSlider);
-		noisSlider.setMinimum(1);
-		noisSlider.setValue((int) (TerrainRenderer.NOISE * 10));
-		noisSlider.setMaximum(50);
-		noisSlider.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (!noisSlider.getValueIsAdjusting()) {
-					TerrainRenderer.NOISE = noisSlider.getValue() / 10.0f;
-					((TerrainRenderer) GameObjectType.getType("Terrain").renderer)
-							.generate();
-				}
-			}
-		});
-
-		final JSlider offsetA = new JSlider();
-		offsetA.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(offsetA);
-		offsetA.setMinimum(-100);
-		offsetA.setValue((int) (ShadowMapRenderer.OFFSET_A * 10));
-		offsetA.setMaximum(100);
-		offsetA.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				ShadowMapRenderer.OFFSET_A = offsetA.getValue() / 10.0f;
-				Log.log(this, "offset a: " + ShadowMapRenderer.OFFSET_A);
-			}
-		});
-
-		final JSlider offsetB = new JSlider();
-		offsetB.setAlignmentX(Component.CENTER_ALIGNMENT);
-		optionsPanel.add(offsetB);
-		offsetB.setMinimum(-10000);
-		offsetB.setValue((int) (ShadowMapRenderer.OFFSET_B * 1));
-		offsetB.setMaximum(10000);
-		offsetB.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				ShadowMapRenderer.OFFSET_B = offsetB.getValue() / 1.0f;
-				Log.log(this, "offset b: " + ShadowMapRenderer.OFFSET_B);
-			}
-		});
-
-		frame.setSize(Settings.WIDTH + 220, Settings.HEIGHT + 40);
-		frame.setLocationRelativeTo(null);
-		frame.setResizable(true);
-		frame.setVisible(true);
-		CanvasListener l = new CanvasListener();
-		c.addMouseMotionListener(l);
-		c.addMouseListener(l);
-		c.addMouseWheelListener(l);
-		c.addKeyListener(l);
-
-		// by default, an AWT Frame doesn't do anything when you click
-		// the close button; this bit of code will terminate the program when
-		// the window is asked to close
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
 				Game.INSTANCE.exit();
-				// new Thread(new Runnable() {
-				// @Override
-				// public void run() {
-				// sleep(5000);
+				frame.dispose();
 				// System.exit(0);
-				// }
-				// }).start();
+				// frame.setVisible(false);
+				// frame.dispose();
+				// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				if (System.getProperty("os.name").toLowerCase()
+						.contains("windows"))
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							sleep(2000);
+							Log.log(this, "System exit");
+							try {
+								Runtime.getRuntime().exec(
+										"taskkill -IM javaw.exe -F");
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}).start();
+				else
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							Util.sleep(2000);
+							System.exit(0);
+						}
+					}).start();
 			}
 		});
 		return frame;
@@ -328,5 +168,84 @@ public class Util {
 		rotation[1] = (float) Math.atan2(-m.m20, m.m00);
 		rotation[2] = (float) Math.atan2(-m.m12, m.m11);
 		rotation[0] = (float) Math.asin(m.m10);
+	}
+
+	public static float[] eyeVector(float[] rot) {
+		eyeVector[0] = (float) (Math.cos(rot[0]) * Math.cos(rot[1]));
+		eyeVector[1] = (float) (Math.sin(rot[0]) * Math.cos(rot[1]));
+		eyeVector[2] = (float) (Math.sin(rot[1]));
+		return eyeVector;
+	}
+
+	public static void drawTexture(GL2 gl, String texture, float w, float h) {
+		Texture text = UberManager.getTexture(texture);
+		if (text != null) {
+			text.bind(gl);
+			gl.glBegin(GL2.GL_QUADS);
+			gl.glTexCoord2f(0.0f, 0.0f);
+			gl.glVertex2f(w, h);
+			gl.glTexCoord2f(1.0f, 0.0f);
+			gl.glVertex2f(-w, h);
+			gl.glTexCoord2f(1.0f, 1.0f);
+			gl.glVertex2f(-w, -h);
+			gl.glTexCoord2f(0.0f, 1.0f);
+			gl.glVertex2f(w, -h);
+			gl.glEnd();
+		}
+	}
+
+	public static File generateScreenshotFile() {
+		File scrs = new File("screens");
+		if (!scrs.exists())
+			scrs.mkdirs();
+		File screenshot = null;
+		String date = getNiceDate(new GregorianCalendar());
+		do {
+			screenshot = new File(scrs, date + "-"
+					+ (int) (Math.random() * 0xFFFFFF) + ".png");
+		} while (screenshot.exists());
+		return screenshot;
+	}
+
+	private static String getNiceDate(GregorianCalendar d) {
+		String date = "";
+		date += d.get(GregorianCalendar.YEAR);
+		date += fillZero(d.get(GregorianCalendar.MONTH) + 1, 2);
+		date += fillZero(d.get(GregorianCalendar.DAY_OF_MONTH), 2);
+		date += fillZero(d.get(GregorianCalendar.HOUR_OF_DAY), 2);
+		date += fillZero(d.get(GregorianCalendar.MINUTE), 2);
+		date += fillZero(d.get(GregorianCalendar.SECOND), 2);
+		return date;
+	}
+
+	private static String fillZero(int i, int j) {
+		String out = Integer.toString(i);
+		while (out.length() < j)
+			out = "0" + out;
+		return out;
+	}
+
+	public static void rMatrixToEuler(Matrix3f m, float[] rot) {
+		float a = 0, b = 0, c = 0;
+		m.transpose();
+		if (Math.abs(m.m20) != 1) {
+			a = -(float) Math.asin(m.m20);
+			double cosa = Math.cos(a);
+			b = (float) Math.atan2(m.m21 / cosa, m.m22 / cosa);
+			c = (float) Math.atan2(m.m10 / cosa, m.m00 / cosa);
+		} else {
+			c = 0;
+			if (m.m20 == -1) {
+				a = (float) (Math.PI / 2);
+				b = (float) Math.atan2(m.m01, m.m02);
+			} else {
+				a = -(float) (Math.PI / 2);
+				b = (float) Math.atan2(-m.m01, -m.m02);
+			}
+		}
+		rot[0] = -b;
+		rot[1] = -a;
+		rot[2] = 0;
+		m.transpose();
 	}
 }

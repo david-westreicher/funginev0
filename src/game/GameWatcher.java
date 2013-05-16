@@ -1,9 +1,12 @@
 package game;
 
+import java.io.File;
+
 import javax.script.ScriptException;
 
-import manager.ScriptManager;
-import manager.SpriteManager;
+import manager.UberManager;
+import rendering.ModelRenderer;
+import rendering.RenderUpdater;
 import script.Script;
 import settings.Settings;
 import util.Factory;
@@ -15,10 +18,6 @@ import world.World;
 
 public class GameWatcher implements FolderListener {
 
-	/**
-	 * @uml.property  name="game"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
 	private Game game;
 
 	public GameWatcher(Game g) {
@@ -52,19 +51,40 @@ public class GameWatcher implements FolderListener {
 		}
 		if (s.equals(Settings.OBJECTS_XML)) {
 			GameLoop gl = game.loop;
+			UberManager.clear();
+			Util.sleep(10);
 			gl.startPause();
 			Util.sleep(10);
-			((SpriteManager) game.getManager("sprite")).textures.clear();
 			game.parseXML();
 			gl.endPause();
 		} else {
-			String folder = s.split("\\\\")[0];
+			String folder = s.split(File.separator)[0];
+			s = s.replace("\\", "/");
+			Log.log(this,folder);
 			if (folder.equals("scripts")) {
 				game.getManager("script").changed(s);
 			} else if (folder.equals("img")) {
-				game.getManager("sprite").changed(s);
+				UberManager.textureChanged(s);
 			} else if (folder.equals("shader")) {
-				game.getManager("shader").changed(s);
+				UberManager.shaderChanged(s);
+				// game.getManager("shader").changed(s);
+			} else if (folder.equals("obj")) {
+				GameLoop gl = game.loop;
+				gl.startPause();
+				Util.sleep(10);
+				for (final GameObjectType go : GameObjectType.getTypes()) {
+					if (go.renderer != null && go.renderer.getName().equals(s)) {
+						final ModelRenderer newModel = new ModelRenderer(s,
+								false);
+						RenderUpdater.executeInOpenGLContext(new Runnable() {
+							@Override
+							public void run() {
+								go.renderer = newModel;
+							}
+						});
+					}
+				}
+				gl.endPause();
 			}
 		}
 	}

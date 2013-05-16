@@ -1,9 +1,11 @@
 package util;
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.media.opengl.GL2;
 import javax.vecmath.Vector3f;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -16,13 +18,11 @@ import org.xml.sax.helpers.DefaultHandler;
 import physics.HeightfieldTerrainShape;
 import physics.PhysicsTest;
 import rendering.AnimationRenderer;
-import rendering.BoxRenderer;
-import rendering.LightRenderer;
+import rendering.ChunkRenderer;
 import rendering.ModelRenderer;
 import rendering.SpriteRenderer;
 import rendering.TerrainRenderer;
-import rendering.TestRenderer;
-import rendering.VidRenderer;
+import rendering.VoxelWorldRenderer;
 import script.GameScript;
 import settings.Settings;
 import world.GameObjectType;
@@ -56,7 +56,6 @@ public class XMLToObjectParser extends DefaultHandler {
 		}
 		if (qName.equals("object")) {
 			currentObject = new GameObjectType(currentAtt.get("name"));
-			String ordering = currentAtt.get("layer");
 		} else {
 			currentTag = qName;
 		}
@@ -99,37 +98,38 @@ public class XMLToObjectParser extends DefaultHandler {
 					float terrainSize = Float.parseFloat(split[1])
 							* PhysicsTest.PHYSICS_SCALE;
 					HeightfieldTerrainShape height = new HeightfieldTerrainShape(
-							TerrainRenderer.STATIC_WIDTH + 1,
-							TerrainRenderer.STATIC_HEIGHT + 1,
+							TerrainRenderer.WIDTH + 1,
+							TerrainRenderer.HEIGHT + 1,
 							TerrainRenderer.getHeightField(), terrainSize,
 							-0.5f, 0.5f, HeightfieldTerrainShape.YAXIS, false);
-					float gridSpacing = terrainSize
-							/ TerrainRenderer.STATIC_WIDTH;
+					float gridSpacing = terrainSize / TerrainRenderer.WIDTH;
 					Log.log(this, gridSpacing, size);
 					height.setLocalScaling(new Vector3f(gridSpacing, 1,
 							gridSpacing));
 					currentObject.shape = height;
 				}
 			} else if (currentTag.equals("renderer")) {
-				if (s.equals("simple"))
-					currentObject.renderer = new TestRenderer();
-				else if (s.equals("box"))
-					currentObject.renderer = new BoxRenderer();
-				else if (s.equals("light"))
-					currentObject.renderer = new LightRenderer();
-				else if (s.equals("terrain"))
+				if (s.equals("terrain"))
 					currentObject.renderer = new TerrainRenderer();
 				else if (s.equals("voxelTerrain"))
 					currentObject.renderer = new VoxelTerrainRenderer();
-				else if (s.split("\\\\")[0].equals("img"))
+				else if (s.equals("voxelTerrain"))
+					currentObject.renderer = new VoxelTerrainRenderer();
+				else if (s.split("/")[0].equals("img"))
 					currentObject.renderer = new SpriteRenderer(split[0]);
 				if (split.length > 1) {
 					if (split[1].equals("anim"))
 						currentObject.renderer = new AnimationRenderer(split[0]);
 					else if (split[1].equals("obj"))
-						currentObject.renderer = new ModelRenderer(split[0]);
-					else if (split[1].equals("vid"))
-						currentObject.renderer = new VidRenderer(split[0]);
+						currentObject.renderer = new ModelRenderer(split[0],
+								split.length == 3, split.length == 4);
+					else if (split[1].equals("vox")) {
+						ChunkRenderer cr = new ChunkRenderer(split[0]);
+						currentObject.renderer = cr;
+					} else if (split[1].equals("voxWorld")) {
+						currentObject.renderer = new VoxelWorldRenderer();
+					} else if (split[1].equals("md5"))
+						currentObject.renderer = new Md5Renderer(split[0]);
 				}
 			} else if (currentTag.equals("val")) {
 				currentObject.set(currentAtt.get("name"), s);

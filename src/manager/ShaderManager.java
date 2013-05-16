@@ -75,7 +75,7 @@ public class ShaderManager extends Manager<ShaderScript> {
 		if (status.get() == GL.GL_FALSE) {
 			getInfoLog(gl, id, effect);
 		} else {
-			Log.log("Shader Successfully compiled " + effect);
+			Log.log("Shader Successfully compiled asdasdasd" + effect);
 		}
 	}
 

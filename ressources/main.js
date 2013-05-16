@@ -14,11 +14,12 @@ var terrain;
 var playerLight = null;
 var playerSize = 100;
 var CAM_SPEED = 10;
+var cam;
 
 function init(game, factory) {
     game.cam.setPos(0, 100, 500);
     game.cam.rotation[0] = Math.PI;
-    //game.hideMouse();
+    // game.hideMouse();
     player = factory.createGameObject("Player");
     player.size[0] = playerSize;
     player.size[1] = playerSize;
@@ -29,7 +30,7 @@ function init(game, factory) {
     cam = factory.createGameObject("CamTest");
     cam.setPos(0, 4000, 0);
     cam.rotation[1] = -Math.PI / 2;
-   // game.world.add(cam);
+    // game.world.add(cam);
 
     playerLight = factory.createGameObject("CamTest");
     playerLight.setPos(0, 500, 0);
@@ -48,23 +49,23 @@ function init(game, factory) {
     vid.setPos(0, 0, 0);
     // game.world.add(vid);
 
-    // terrain = factory.createGameObject("Terrain");
-    // terrain.size[0] = 25000;
-    // terrain.size[1] = 25000;
-    // terrain.size[2] = 25000;
-    // terrain.setPos(0, 0, 0);
-    // terrain.friction = 0;
-    // terrain.setFixed(true);
-    // terrain.setColor(1,1,1);
-    // game.world.add(terrain);
-
-    terrain = factory.createGameObject("VoxelTerrain");
+    terrain = factory.createGameObject("Terrain");
     terrain.size[0] = 25000;
     terrain.size[1] = 25000;
     terrain.size[2] = 25000;
     terrain.setPos(0, 0, 0);
+    terrain.friction = 0;
+    terrain.setFixed(true);
     terrain.setColor(1, 1, 1);
     game.world.add(terrain);
+
+    // terrain = factory.createGameObject("VoxelTerrain");
+    // terrain.size[0] = 25000;
+    // terrain.size[1] = 25000;
+    // terrain.size[2] = 25000;
+    // terrain.setPos(0, 0, 0);
+    // terrain.setColor(1, 1, 1);
+    // game.world.add(terrain);
 
     skyboxl = factory.createGameObject("Skybox-l");
     skyboxl.size[0] = 1;
@@ -108,7 +109,7 @@ function init(game, factory) {
     skyboxd.size[2] = 1;
     skyboxd.rotation[0] = Math.PI / 2;
     skyboxd.rotation[1] = Math.PI;
-    skyboxd.rotation[2] = Math.PI/2;
+    skyboxd.rotation[2] = Math.PI / 2;
     skyboxd.setPos(0, -0.5, 0);
     game.world.add(skyboxd);
 
@@ -192,14 +193,13 @@ function update(game) {
     }
 
     if (keyB.isDown('c')) {
-        // if(cam==null){
-        // cam = factory.createGameObject("CamTest");
-        // game.world.add(cam);
+        // if (cam == null) {
+        cam = factory.createGameObject("CamTest");
+        game.world.add(cam);
         // }
         for ( var i = 0; i < 3; i++) {
-            playerLight.rotation[i] = game.cam.rotation[i];
-            playerLight.pos[i] = game.cam.pos[i];
-            playerLight.pos[1] += 50;
+            cam.rotation[i] = game.cam.rotation[i];
+            cam.pos[i] = game.cam.pos[i];
         }
     }
     // for(var i =0;i<boxs.length;i++){

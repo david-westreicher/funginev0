@@ -1,41 +1,42 @@
 package world;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.bulletphysics.collision.shapes.CollisionShape;
-
 import rendering.GameObjectRenderer;
+import rendering.RenderState;
 import script.GameScript;
-import util.Log;
 
-import game.Component;
-import game.Updatable;
+import com.bulletphysics.collision.shapes.CollisionShape;
 
 public class GameObjectType extends VariableHolder {
 	private static Map<String, GameObjectType> allTypes = new HashMap<String, GameObjectType>();
 
 	/**
-	 * @uml.property  name="renderer"
-	 * @uml.associationEnd  
+	 * @uml.property name="renderer"
+	 * @uml.associationEnd
 	 */
 	public GameObjectRenderer renderer = null;
 	/**
-	 * @uml.property  name="script"
-	 * @uml.associationEnd  
+	 * @uml.property name="script"
+	 * @uml.associationEnd
 	 */
 	public GameScript script = null;
 	/**
-	 * @uml.property  name="shape"
-	 * @uml.associationEnd  
+	 * @uml.property name="shape"
+	 * @uml.associationEnd
 	 */
 	public CollisionShape shape = null;
 	/**
-	 * @uml.property  name="name"
+	 * @uml.property name="name"
 	 */
 	public String name;
+
+	public float shininess = (float) (Math.random() * 2000);
+	public float reflective = 0;
+	public boolean airShader = false;
+	public RenderState renderState = new RenderState();
 
 	public GameObjectType(String name) {
 		allTypes.put(name, this);
@@ -46,8 +47,14 @@ public class GameObjectType extends VariableHolder {
 		return allTypes.get(name);
 	}
 
+	@Override
 	public String toString() {
-		return name + ", " + script + ", " + renderer;
+		return "GameObjectType [renderer=" + renderer + ", script=" + script
+				+ ", shape=" + shape + ", name=" + name + ", shininess="
+				+ shininess + "]";
 	}
 
+	public static Collection<GameObjectType> getTypes() {
+		return allTypes.values();
+	}
 }

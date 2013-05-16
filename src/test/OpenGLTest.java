@@ -4,14 +4,26 @@ import game.Game;
 
 import java.io.File;
 
+import browser.AwesomiumHelper;
+
+import reflection.Reflection;
 import settings.Settings;
+import util.Log;
+import util.Util;
 
 public class OpenGLTest {
 
 	public static void main(String[] args) {
-		//Settings.RESSOURCE_FOLDER = args[0]+ File.separator;
-		new Game();
+		if (args.length > 0)
+			Settings.RESSOURCE_FOLDER = args[0] + File.separator;
+		Log.log(OpenGLTest.class, "Ressource folder is: "
+				+ Settings.RESSOURCE_FOLDER);
+
+		// Log.getInstance().excludeFromLogging(BerkeliumWrapper.class);
+		Log.getInstance().excludeFromLogging(Reflection.class);
+		Log.getInstance().excludeFromLogging(AwesomiumHelper.class);
+		Game g = new Game();
+		Util.sleep(500);
+		g.start();
 	}
-
-
 }

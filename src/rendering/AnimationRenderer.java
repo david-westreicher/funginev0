@@ -1,61 +1,19 @@
 package rendering;
 
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Float;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import game.Game;
-import game.GameLoop;
-
-import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
-
-import util.Log;
-import util.Util;
-import world.GameObject;
-import world.GameObjectType;
-
-import manager.SpriteManager;
-
-import com.jogamp.opengl.util.texture.Texture;
 
 public class AnimationRenderer extends SpriteRenderer {
 
-	/**
-	 * @uml.property  name="vSprites"
-	 */
 	private float vSprites = 7;
-	/**
-	 * @uml.property  name="hSprites"
-	 */
 	private float hSprites = 10;
-	/**
-	 * @uml.property  name="nvSprites"
-	 */
 	private float nvSprites = 1 / vSprites;
-	/**
-	 * @uml.property  name="nhSprites"
-	 */
 	private float nhSprites = 1 / hSprites;
-	// private int currentSprite = 0;
-	/**
-	 * @uml.property  name="lastTime"
-	 */
 	private long lastTime;
-	/**
-	 * @uml.property  name="speed"
-	 */
 	private long speed = 10;
-	/**
-	 * @uml.property  name="subSprites"
-	 * @uml.associationEnd  qualifier="valueOf:java.lang.Integer F"
-	 */
 	private Map<Integer, float[]> subSprites = new HashMap<Integer, float[]>();
-	/**
-	 * @uml.property  name="num"
-	 */
 	private int num = (int) (vSprites * hSprites);
 
 	public AnimationRenderer(String str) {

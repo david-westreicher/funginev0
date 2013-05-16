@@ -13,8 +13,8 @@ public class VoxelRenderer extends RenderUpdater {
 	private ShaderScript renderVoxel;
 
 	public VoxelRenderer() {
-		renderDepth = new ShaderScript("shader\\renderDepth.glsl");
-		renderVoxel = new ShaderScript("shader\\renderVoxel.glsl");
+		// renderDepth = new ShaderScript("shader\\renderDepth.glsl");
+		// renderVoxel = new ShaderScript("shader\\renderVoxel.glsl");
 		super.executeInOpenGLContext(new Runnable() {
 			@Override
 			public void run() {
@@ -68,7 +68,7 @@ public class VoxelRenderer extends RenderUpdater {
 		gl.glDisable(GL2.GL_DEPTH_TEST);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
-		super.setupLook(new float[] { 0, 0, 0 }, cam.rotation);
+		super.setupLook(new float[] { 0, 0, 0 }, cam.rotationMatrix);
 		gl.glScalef(SKYBOX_SCALE, SKYBOX_SCALE, SKYBOX_SCALE);
 		super.renderExcludedObjects();
 		gl.glPopMatrix();

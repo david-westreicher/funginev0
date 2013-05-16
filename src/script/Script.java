@@ -1,5 +1,7 @@
 package script;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,13 +22,20 @@ import util.Log;
 public class Script {
 
 	public static Map<String, Invocable> scripts = new HashMap<String, Invocable>();
+	private static ScriptEngine engine;
 
 	public static void execute(String script, Object... vars)
 			throws ScriptException {
 		ScriptEngine engine = getEngine();
 		for (int i = 0; i < vars.length; i += 2)
 			engine.put((String) vars[i], vars[i + 1]);
-		engine.eval(IO.read(script));
+		BufferedReader br = IO.read(script);
+		engine.eval(br);
+		try {
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void executeFunction(String script, String func,
@@ -36,8 +45,14 @@ public class Script {
 			ScriptEngine engine = getEngine();
 			engine.put("game", Game.INSTANCE);
 			engine.put("factory", Factory.INSTANCE);
-			engine.put("log", new Log());
-			Object objects = engine.eval(IO.read(script));
+			engine.put("log", Log.getInstance());
+			BufferedReader br = IO.read(script);
+			Object objects = engine.eval(br);
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			inv = (Invocable) engine;
 			scripts.put(script, inv);
 		}
@@ -45,15 +60,22 @@ public class Script {
 	}
 
 	private static ScriptEngine getEngine() {
-		ScriptEngineManager engineMgr = new ScriptEngineManager();
-		ScriptEngine engine = engineMgr.getEngineByName("JavaScript");
+		if (engine == null) {
+			ScriptEngineManager engineMgr = new ScriptEngineManager();
+			engine = engineMgr.getEngineByName("JavaScript");
+		}
 		return engine;
 	}
 
 	public static void compile(String scriptFile) throws ScriptException {
 		ScriptEngine engine = getEngine();
-		CompiledScript script = ((Compilable) engine).compile(IO
-				.read(scriptFile));
+		BufferedReader br = IO.read(scriptFile);
+		CompiledScript script = ((Compilable) engine).compile(br);
+		try {
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		// engine.
 	}
 

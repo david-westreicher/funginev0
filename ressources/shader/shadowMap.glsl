@@ -1,9 +1,11 @@
 #version 140
-#define SIZE 30
+#define SIZE 20
 uniform vec3 scaleArr[SIZE];
 uniform vec3 translateArr[SIZE];
+uniform vec3 translateOldArr[SIZE];
 uniform mat3 rotationMatrices[SIZE];
 uniform vec3 colorArr[SIZE];
+uniform float interp;
 
 
 uniform vec3 lightPos;
@@ -14,6 +16,8 @@ varying vec3 normal;
 mat4 getTransformMatrix(){
 	vec3 scale = scaleArr[gl_InstanceID];
 	vec3 translate = translateArr[gl_InstanceID];
+	vec3 translateOld = translateOldArr[gl_InstanceID];
+	translate = translateOld*(1-interp)+translate*(interp);
 	mat4 R = mat4(	vec4(rotationMatrices[gl_InstanceID][0],0),
 					vec4(rotationMatrices[gl_InstanceID][1],0),
 					vec4(rotationMatrices[gl_InstanceID][2],0),

@@ -2,22 +2,16 @@ package input;
 
 import game.Game;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
+import com.jogamp.newt.event.MouseListener;
+import com.jogamp.newt.event.MouseEvent;
 
-import rendering.BerkeliumWrapper;
+import rendering.RenderUpdater;
+import settings.Settings;
+import util.Log;
 
-public class CanvasListener implements MouseMotionListener, MouseListener,
-		MouseWheelListener, KeyListener {
-	/**
-	 * @uml.property name="input"
-	 * @uml.associationEnd multiplicity="(1 1)"
-	 */
+public class CanvasListener implements MouseListener, KeyListener {
 	private Input input;
 
 	public CanvasListener() {
@@ -29,7 +23,7 @@ public class CanvasListener implements MouseMotionListener, MouseListener,
 		int x = e.getX();
 		int y = e.getY();
 		input.mouse.set(x, y);
-		BerkeliumWrapper.mouseMoved(x, y);
+		RenderUpdater.getBrowser().mouseMoved(x, y);
 	}
 
 	@Override
@@ -37,7 +31,7 @@ public class CanvasListener implements MouseMotionListener, MouseListener,
 		int x = e.getX();
 		int y = e.getY();
 		input.mouse.set(e.getX(), e.getY());
-		BerkeliumWrapper.mouseMoved(x, y);
+		RenderUpdater.getBrowser().mouseMoved(x, y);
 	}
 
 	@Override
@@ -53,42 +47,58 @@ public class CanvasListener implements MouseMotionListener, MouseListener,
 	@Override
 	public void mouseExited(MouseEvent e) {
 		input.mouse.set(e.getX(), e.getY());
-
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		input.mouse.down = true;
-		BerkeliumWrapper.mouseButton(e.getButton() - 1, true);
+		int buttonNum = e.getButton() - 1;
+		input.mouse.down[buttonNum] = true;
+		RenderUpdater.getBrowser().mouseButton(buttonNum,
+				input.mouse.down[buttonNum]);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		input.mouse.down = false;
-		BerkeliumWrapper.mouseButton(e.getButton() - 1, false);
-	}
-
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		input.mouse.wheel = e.getWheelRotation();
-		BerkeliumWrapper.mouseWheel(e);
+		int buttonNum = e.getButton() - 1;
+		input.mouse.down[buttonNum] = false;
+		RenderUpdater.getBrowser().mouseButton(buttonNum,
+				input.mouse.down[buttonNum]);
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		input.keyboard.pressed(e.getKeyChar());
-		BerkeliumWrapper.keyEvent(e, true);
+		RenderUpdater.getBrowser().keyEvent(e, true);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_F1) {
+			Settings.USE_BERKELIUM = !Settings.USE_BERKELIUM;
+			if (Settings.USE_BERKELIUM) {
+				Game.INSTANCE.loop.pauseLogic();
+				Game.INSTANCE.hideMouse(false);
+				Settings.SHOW_STATUS = false;
+				RenderUpdater.getBrowser().debugSite();
+			} else {
+				Settings.SHOW_STATUS = true;
+				Game.INSTANCE.loop.continueLogic();
+				RenderUpdater.getBrowser().restoreSite();
+			}
+		}
 		input.keyboard.released(e.getKeyChar());
-		BerkeliumWrapper.keyEvent(e, false);
+		RenderUpdater.getBrowser().keyEvent(e, false);
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		BerkeliumWrapper.keyTyped(e);
+		RenderUpdater.getBrowser().keyTyped(e);
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseEvent e) {
+		input.mouse.wheel = e.getWheelRotation();
+		RenderUpdater.getBrowser().mouseWheel(e);
 	}
 
 }

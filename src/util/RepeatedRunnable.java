@@ -27,6 +27,10 @@ public abstract class RepeatedRunnable extends Stoppable {
 			executeRepeatedly();
 		}
 		Log.log(this,"terminated!");
+		onStopped();
+	}
+
+	protected void onStopped() {
 	}
 
 	protected abstract void executeRepeatedly();

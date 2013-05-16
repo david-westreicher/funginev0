@@ -13,6 +13,7 @@ import javax.media.opengl.fixedfunc.GLMatrixFunc;
 import shader.ShaderScript;
 import util.Log;
 import world.GameObject;
+import world.PointLight;
 
 import com.jogamp.common.nio.Buffers;
 
@@ -20,9 +21,10 @@ public class ShadowMapRenderer extends RenderUpdater {
 
 	private static final int SHADOW_MAP_SIZE = 4096;
 	private static final float SKYBOX_SCALE = 500;
-	public static float OFFSET_A = 1;
+	public static boolean POST_PROCESS = false;
+	public static float OFFSET_A = 0;
 	public static float OFFSET_B = 0;
-	public static float FOV = 60;
+	public static float FOV = 80;
 	private FloatBuffer lightMatrix = Buffers.newDirectFloatBuffer(16);
 	private FloatBuffer projectionMatrix = Buffers.newDirectFloatBuffer(16);
 	private FloatBuffer modelViewMatrix = Buffers.newDirectFloatBuffer(16);
@@ -34,10 +36,10 @@ public class ShadowMapRenderer extends RenderUpdater {
 	private ShaderScript dofShader;
 
 	public ShadowMapRenderer() {
-		shadowMapScript = new ShaderScript("shader\\shadowMap.glsl");
-		renderDepth = new ShaderScript("shader\\renderDepth.glsl");
-		textureShader = new ShaderScript("shader\\textureShader.glsl");
-		dofShader = new ShaderScript("shader\\blur.glsl");
+		//shadowMapScript = new ShaderScript("shader\\shadowMap.glsl");
+		//renderDepth = new ShaderScript("shader\\renderDepth.glsl");
+		//textureShader = new ShaderScript("shader\\textureShader.glsl");
+		//dofShader = new ShaderScript("shader\\blur.glsl");
 		super.executeInOpenGLContext(new Runnable() {
 			@Override
 			public void run() {
@@ -74,7 +76,7 @@ public class ShadowMapRenderer extends RenderUpdater {
 				rttStart(fobs.get(3)[1], true);
 				rttEnd();
 			}
-			if (DOFRenderer.POST_PROCESS) {
+			if (POST_PROCESS) {
 				rttStart(fobs.get(4)[1], true);
 				rttEnd();
 			}
@@ -82,12 +84,12 @@ public class ShadowMapRenderer extends RenderUpdater {
 			rttStart(fobs.get(0)[1], false);
 			renderSkyBox();
 			rttEnd();
-			List<GameObject> cameras = renderObjs.get("CamTest");
-			int cameraNum = 0;
-			if (cameras != null) {
-				renderStrings.add("Lights    :  " + cameras.size());
+			List<GameObject> lights = renderObjs.get(PointLight.LIGHT_OBJECT_TYPE_NAME);
+			int lightNum = 0;
+			if (lights != null) {
+				renderStrings.add("Lights    :  " + lights.size());
 				boolean isFirst = true;
-				for (GameObject cam : cameras) {
+				for (GameObject cam : lights) {
 					createShadowMap(cam);
 					// rttStart(fobs.get(0)[1], true);
 					gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fobs.get(0)[1]);
@@ -98,6 +100,7 @@ public class ShadowMapRenderer extends RenderUpdater {
 								GL.GL_ONE_MINUS_SRC_ALPHA);
 						setModelViewMatrix();
 						shadowMapScript.execute(gl);
+						ShaderScript.setUniform("interp", interp);
 						ShaderScript.setUniformTexture("shadowTexture", 0,
 								fobs.get(1)[0]);
 						ShaderScript.setUniform("lightPos", cam.pos);
@@ -111,7 +114,7 @@ public class ShadowMapRenderer extends RenderUpdater {
 					rttEnd();
 					super.startOrthoRender();
 					{
-						if (DOFRenderer.POST_PROCESS)
+						if (POST_PROCESS)
 							gl.glBindFramebuffer(GL.GL_FRAMEBUFFER,
 									fobs.get(4)[1]);
 						{
@@ -124,7 +127,7 @@ public class ShadowMapRenderer extends RenderUpdater {
 							}
 							gl.glDisable(GL.GL_BLEND);
 						}
-						if (DOFRenderer.POST_PROCESS)
+						if (POST_PROCESS)
 							rttEnd();
 						if (Game.DEBUG) {
 							gl.glBindFramebuffer(GL.GL_FRAMEBUFFER,
@@ -135,12 +138,12 @@ public class ShadowMapRenderer extends RenderUpdater {
 							ShaderScript.setUniform("zFar", RenderUpdater.ZFar);
 							ShaderScript.setUniformTexture("depth", 0,
 									fobs.get(1)[0]);
-							drawQuad(cameraNum * height / 4, 3 * height / 4,
+							drawQuad(lightNum * height / 4, 3 * height / 4,
 									height / 4, height / 4, true);
 							renderDepth.end(gl);
 							rttEnd();
 						}
-						cameraNum++;
+						lightNum++;
 					}
 					super.endOrthoRender();
 					isFirst = false;
@@ -150,10 +153,10 @@ public class ShadowMapRenderer extends RenderUpdater {
 				super.renderObjects();
 			}
 
-			if (DOFRenderer.POST_PROCESS || Game.DEBUG) {
+			if (POST_PROCESS || Game.DEBUG) {
 				super.startOrthoRender();
 				gl.glDisable(GL2.GL_DEPTH_TEST);
-				if (DOFRenderer.POST_PROCESS) {
+				if (POST_PROCESS) {
 					dofShader.execute(gl);
 					// float distanceFromCam =
 					// PhysicsTest.getInstance().rayTest(
@@ -203,7 +206,7 @@ public class ShadowMapRenderer extends RenderUpdater {
 		gl.glDisable(GL2.GL_DEPTH_TEST);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
-		super.setupLook(new float[] { 0, 0, 0 }, cam.rotation);
+		super.setupLook(new float[] { 0, 0, 0 }, cam.rotationMatrix);
 		gl.glScalef(SKYBOX_SCALE, SKYBOX_SCALE, SKYBOX_SCALE);
 		super.renderExcludedObjects();
 		gl.glPopMatrix();

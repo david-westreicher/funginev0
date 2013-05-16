@@ -1,5 +1,6 @@
 package world;
 
+import java.awt.Color;
 import java.util.Arrays;
 
 import javax.vecmath.Matrix3f;
@@ -22,13 +23,16 @@ public class GameObject extends VariableHolder {
 			(float) Math.random(), (float) Math.random() };
 	public float friction = 0;
 	private String type;
-	public float angle;
 	public float[] force = new float[3];
 	public boolean fixed = false;
 	public float[] rotationMatrixArray = new float[9];
-	private Matrix3f rotationMatrix = new Matrix3f(1, 0, 0, 0, 1, 0, 0, 0, 1);
+	public Matrix3f rotationMatrix = new Matrix3f(1, 0, 0, 0, 1, 0, 0, 0, 1);
 	public float alpha = 1;
+	public boolean marked;
+	public boolean render = true;
+	public float angle;
 	private static Vector3f tmpVector = new Vector3f();
+	private static Vector3f tmp2Vector = new Vector3f();
 	private static Matrix3f tmpMatrix = new Matrix3f();
 
 	public GameObject(String name) {
@@ -44,14 +48,21 @@ public class GameObject extends VariableHolder {
 	}
 
 	public void beforeUpdate() {
-		if (GameObjectType.getType(type).shape == null) {
+		updateRotation();
+		setTo(oldPos, pos);
+	}
+
+	public void updateRotation() {
+		if (GameObjectType.getType(type).shape == null && get("parent") == null) {
 			rotationMatrix.setIdentity();
-			rotationMatrix.rotX(rotation[0]);
-			rotationMatrix.rotY(rotation[1]);
-			rotationMatrix.rotZ(rotation[2]);
+			tmpMatrix.rotY(rotation[1]);
+			rotationMatrix.mul(tmpMatrix);
+			tmpMatrix.rotX(rotation[0]);
+			rotationMatrix.mul(tmpMatrix);
+			tmpMatrix.rotZ(rotation[2]);
+			rotationMatrix.mul(tmpMatrix);
 		}
 		updateRotationMatrixArray();
-		setTo(oldPos, pos);
 	}
 
 	private void updateRotationMatrixArray() {
@@ -66,19 +77,18 @@ public class GameObject extends VariableHolder {
 		rotationMatrixArray[8] = rotationMatrix.m22;
 	}
 
-	private void setTo(float[] oldPos2, float[] pos2) {
+	protected void setTo(float[] oldPos2, float[] pos2) {
 		for (int i = 0; i < oldPos2.length; i++)
 			oldPos2[i] = pos2[i];
 	}
 
 	public void updateBbox() {
-		float radius = Math.max(Math.max(size[0], size[1]), size[2]);
-		bbox[0] = pos[0] - radius;
-		bbox[1] = pos[0] + radius;
-		bbox[2] = pos[1] - radius;
-		bbox[3] = pos[1] + radius;
-		bbox[4] = pos[2] - radius;
-		bbox[5] = pos[2] + radius;
+		bbox[0] = pos[0] - size[0] / 2;
+		bbox[1] = pos[0] + size[0] / 2;
+		bbox[2] = pos[1] - size[1] / 2;
+		bbox[3] = pos[1] + size[1] / 2;
+		bbox[4] = pos[2] - size[2] / 2;
+		bbox[5] = pos[2] + size[2] / 2;
 	}
 
 	public void setPos(float x, float y) {
@@ -105,10 +115,29 @@ public class GameObject extends VariableHolder {
 		color[2] = b;
 	}
 
+	public void setColor(int rgb) {
+		Color rgbC = new Color(rgb);
+		color[0] = (float) rgbC.getRed() / 255f;
+		color[1] = (float) rgbC.getGreen() / 255f;
+		color[2] = (float) rgbC.getBlue() / 255f;
+	}
+
 	public void setRotation(float x, float y, float z) {
 		rotation[0] = x;
 		rotation[1] = y;
 		rotation[2] = z;
+	}
+
+	public void setRotation(float rot[]) {
+		rotation[0] = rot[0];
+		rotation[1] = rot[1];
+		rotation[2] = rot[2];
+	}
+
+	public void setSize(float x, float y, float z) {
+		size[0] = x;
+		size[1] = y;
+		size[2] = z;
 	}
 
 	public String toString2() {
@@ -117,16 +146,8 @@ public class GameObject extends VariableHolder {
 
 	@Override
 	public String toString() {
-		return "GameObject [bbox=" + Arrays.toString(bbox) + ", pos="
-				+ Arrays.toString(pos) + ", oldPos=" + Arrays.toString(oldPos)
-				+ ", size=" + Arrays.toString(size) + ", rotation="
-				+ Arrays.toString(rotation) + ", color="
-				+ Arrays.toString(color) + ", friction=" + friction + ", type="
-				+ type + ", angle=" + angle + ", force="
-				+ Arrays.toString(force) + ", fixed=" + fixed
-				+ ", rotationMatrixArray="
-				+ Arrays.toString(rotationMatrixArray) + ", rotationMatrix="
-				+ rotationMatrix + ", alpha=" + alpha + "]";
+		return "GameObject [pos=" + Arrays.toString(pos) + ", color="
+				+ Arrays.toString(color) + "]";
 	}
 
 	/**
@@ -158,6 +179,29 @@ public class GameObject extends VariableHolder {
 		fixed = b;
 	}
 
+	public void computeRelativeTransform(GameObject child) {
+		float[] relPos = (float[]) child.get("relPos");
+		if (relPos == null) {
+			child.set("parent", this);
+			relPos = new float[] { child.pos[0], child.pos[1], child.pos[2] };
+			child.set("relPos", relPos);
+		}
+		Matrix3f relRot = (Matrix3f) child.get("relRot");
+		if (relRot == null) {
+			child.updateRotation();
+			relRot = (Matrix3f) child.rotationMatrix.clone();
+			child.set("relRot", relRot);
+		}
+		tmp2Vector.set(relPos);
+		rotationMatrix.transform(tmp2Vector);
+		tmpVector.set(pos);
+		tmpVector.add(tmp2Vector);
+		child.pos[0] = tmpVector.x;
+		child.pos[1] = tmpVector.y;
+		child.pos[2] = tmpVector.z;
+		child.rotationMatrix.mul(rotationMatrix, relRot);
+	}
+
 	public void setLinearVelocity(float x, float y) {
 		RigidBody rigidBody = getRigidBody();
 		if (rigidBody != null) {
@@ -173,6 +217,17 @@ public class GameObject extends VariableHolder {
 				(y == 0) ? vel.y : y, (z == 0) ? vel.z : z));
 	}
 
+	public float[] getEulerFromVector(float vec[]) {
+		tmpVector.set(vec);
+		tmpVector.normalize();
+		return new float[] {
+				(float) (-Math.atan2(
+						tmpVector.y,
+						Math.sqrt(tmpVector.x * tmpVector.x + tmpVector.z
+								* tmpVector.z))),
+				(float) (Math.atan2(tmpVector.x, tmpVector.z)), 0 };
+	}
+
 	public RigidBody getRigidBody() {
 		return PhysicsTest.ids.get(this);
 	}
@@ -182,14 +237,8 @@ public class GameObject extends VariableHolder {
 		updateRotationMatrixArray();
 	}
 
-	public Vector3f getEyeVector() {
-		tmpMatrix.setIdentity();
-		tmpMatrix.rotZ(rotation[2]);
-		tmpMatrix.rotX(rotation[0]);
-		// tmpMatrix.rotZ(rotation[2]);
-		tmpVector.set(0, 0, 1);
-		tmpMatrix.transform(tmpVector);
-		return tmpVector;
+	public GameObjectType getGameObjectType() {
+		return GameObjectType.getType(type);
 	}
 
 }

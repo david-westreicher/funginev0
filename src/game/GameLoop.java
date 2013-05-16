@@ -1,9 +1,18 @@
 package game;
 
+import java.awt.EventQueue;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.media.opengl.GLContext;
+import javax.media.opengl.Threading;
+
+import jogamp.opengl.ThreadingImpl;
+
+import rendering.DeferredRenderer;
+import rendering.OpenGLRendering;
 import rendering.RenderUpdater;
 import settings.Settings;
 import util.Log;
@@ -15,65 +24,20 @@ import util.Util;
 
 public class GameLoop extends RepeatedRunnable {
 	public static int TICKS_PER_SECOND = 60;
-	/**
-	 * @uml.property  name="sKIP_TICKS"
-	 */
 	private int SKIP_TICKS;
-	/**
-	 * @uml.property  name="mAX_FRAMESKIP"
-	 */
 	private final int MAX_FRAMESKIP = 5;
-	/**
-	 * @uml.property  name="mAX_FPS"
-	 */
 	private final int MAX_FPS = 200;
-	/**
-	 * @uml.property  name="renderloops"
-	 */
 	private int renderloops = 0;
-	/**
-	 * @uml.property  name="renderer"
-	 * @uml.associationEnd  
-	 */
 	public Updatable renderer;
-	/**
-	 * @uml.property  name="mechanics"
-	 * @uml.associationEnd  
-	 */
 	public Updatable mechanics;
-	/**
-	 * @uml.property  name="nextTick"
-	 */
+	public Updatable sound;
 	private long nextTick;
-	/**
-	 * @uml.property  name="loops"
-	 */
 	private int loops;
-	/**
-	 * @uml.property  name="interpolation"
-	 */
 	private float interpolation;
-	/**
-	 * @uml.property  name="currentFPS"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
 	public TickCounter currentFPS;
-	/**
-	 * @uml.property  name="currentTick"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
 	public TickCounter currentTick;
-	/**
-	 * @uml.property  name="tick"
-	 */
 	public int tick = 0;
-	/**
-	 * @uml.property  name="pauseLogic"
-	 */
 	private boolean pauseLogic;
-	/**
-	 * @uml.property  name="timePerTick"
-	 */
 	public long timePerTick;
 
 	public GameLoop() {
@@ -84,6 +48,7 @@ public class GameLoop extends RepeatedRunnable {
 	}
 
 	public void setFPS(int fps) {
+		fps = Math.max(fps, 1);
 		TICKS_PER_SECOND = fps;
 		SKIP_TICKS = 1000000000 / TICKS_PER_SECOND;
 	}
@@ -98,12 +63,22 @@ public class GameLoop extends RepeatedRunnable {
 	@Override
 	protected void executeRepeatedly() {
 		loops = 0;
+		if (Game.INSTANCE.exitFlag) {
+			Game.INSTANCE.exit();
+			return;
+		}
+		if (Game.INSTANCE.fullscreenFlag != OpenGLRendering.isFullscreen()) {
+			OpenGLRendering.setFullscreen(Game.INSTANCE.fullscreenFlag);
+		}
 		while (!pauseLogic && System.nanoTime() > nextTick
 				&& loops < MAX_FRAMESKIP) {
+			// Log.log(this, currentFPS.fps);
 			long timePerTickStart = System.currentTimeMillis();
 			if (mechanics != null)
 				mechanics.update(0);
-			timePerTick = System.currentTimeMillis()-timePerTickStart;
+			if (sound != null)
+				sound.update(0);
+			timePerTick = System.currentTimeMillis() - timePerTickStart;
 			nextTick += SKIP_TICKS;
 			tick++;
 			currentTick.tick();
@@ -111,26 +86,39 @@ public class GameLoop extends RepeatedRunnable {
 			renderloops = 0;
 		}
 		if (renderer != null) {
-			//if (renderloops < (float) MAX_FPS / TICKS_PER_SECOND) {
-				currentFPS.tick();
-				if (pauseLogic)
-					interpolation = 0;
-				else
-					interpolation = (float) (System.nanoTime() + SKIP_TICKS - nextTick)
-							/ (float) (SKIP_TICKS);
-				renderer.update(interpolation);
-				renderloops++;
-			/*} else {
-				Thread.yield();
-				Util.sleep(1);
-			}*/
+			/*
+			 * Log.log(this, Threading.isSingleThreaded(),
+			 * Threading.isOpenGLThread(), ThreadingImpl.getMode(),
+			 * ThreadingImpl.isOpenGLThread(), ThreadingImpl.isSingleThreaded(),
+			 * ThreadingImpl.isToolkitThread(), ThreadingImpl.isX11());
+			 */
+			// if (renderloops < (float) MAX_FPS / TICKS_PER_SECOND) {
+			currentFPS.tick();
+			if (pauseLogic)
+				interpolation = 0;
+			else
+				interpolation = (float) (System.nanoTime() + SKIP_TICKS - nextTick)
+						/ (float) (SKIP_TICKS);
+			renderer.update(interpolation);
+			renderloops++;
+			/*
+			 * } else { Thread.yield(); Util.sleep(1); }
+			 */
 		}
 	}
 
 	public void exit() {
-		Log.log(this,"exit");
-		if (renderer != null)
-			renderer.dispose();
+		Log.log(this, "exit");
+		if (mechanics != null)
+			mechanics.dispose();
+		mechanics = null;
+		Updatable tmpRenderer = renderer;
+		renderer = null;
+		if (tmpRenderer != null)
+			tmpRenderer.dispose();
+		if (sound != null)
+			sound.dispose();
+		sound = null;
 	}
 
 	public void pauseLogic() {

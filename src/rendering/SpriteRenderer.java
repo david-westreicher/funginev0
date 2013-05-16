@@ -1,13 +1,8 @@
 package rendering;
 
-import game.Game;
-
-import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
-import util.Log;
-
-import manager.SpriteManager;
+import manager.UberManager;
 
 import com.jogamp.opengl.util.texture.Texture;
 
@@ -22,14 +17,13 @@ public class SpriteRenderer extends GameObjectRenderer {
 	 * @uml.property name="texture"
 	 * @uml.associationEnd readOnly="true"
 	 */
-	public Texture texture;
+	public String texture;
 
 	public SpriteRenderer() {
 	}
 
 	public SpriteRenderer(String str) {
-		((SpriteManager) Game.INSTANCE.getManager("sprite")).getTexture(str,
-				this);
+		this.texture = str;
 	}
 
 	public static void createList() {
@@ -77,9 +71,9 @@ public class SpriteRenderer extends GameObjectRenderer {
 
 	@Override
 	public void init(GL2 gl) {
-		if (texture != null) {
-			// initCall(gl);
-			texture.bind(gl);
+		Texture text = UberManager.getTexture(texture);
+		if (text != null) {
+			text.bind(gl);
 			gl.glCallList(CALL_LIST_NUM[0]);
 		}
 	}
@@ -94,7 +88,7 @@ public class SpriteRenderer extends GameObjectRenderer {
 	@Override
 	public void end(GL2 gl) {
 		// endCall(gl);
-		texture.disable(gl);
+		gl.glDisable(GL2.GL_TEXTURE_2D);
 		gl.glCallList(CALL_LIST_NUM[2]);
 	}
 
@@ -119,6 +113,12 @@ public class SpriteRenderer extends GameObjectRenderer {
 		gl.glTexCoord2f(0.0f, 1.0f);
 		gl.glVertex2f(-0.5f, 0.5f);
 		gl.glEnd();
+	}
+
+	@Override
+	public void drawSimple(GL2 gl) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

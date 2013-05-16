@@ -1,14 +1,13 @@
 package shader;
 
-import game.Game;
-
 import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
-import manager.ShaderManager;
+import com.jogamp.opengl.util.texture.Texture;
+
 import rendering.RenderUpdater;
 import util.Log;
 
@@ -19,11 +18,16 @@ public class ShaderScript {
 	 * @uml.property name="shaderNum"
 	 */
 	public int shaderNum;
-	private String name;
+	private String file;
 
-	public ShaderScript(String file) {
-		this.name = file;
-		((ShaderManager) Game.INSTANCE.getManager("shader")).update(file, this);
+	public ShaderScript(int shaderprogram, String file) {
+		this.shaderNum = shaderprogram;
+		this.file = file;
+	}
+
+	@Override
+	public String toString() {
+		return "ShaderScript [shaderNum=" + shaderNum + ", file=" + file + "]";
 	}
 
 	public void execute(GL2 gl) {
@@ -76,19 +80,20 @@ public class ShaderScript {
 		RenderUpdater.gl.glUniform3fv(location, scales.length / 3, scales, 0);
 	}
 
-	public static void setUniformMatrix(String str, FloatBuffer matrix,
+	public static void setUniformMatrix3(String str, FloatBuffer matrix,
 			boolean transpose) {
 		int location = RenderUpdater.gl.glGetUniformLocation(getActiveShader(),
 				str);
-		int capacity = matrix.capacity();
-		if (capacity % 3 == 0)
-			RenderUpdater.gl.glUniformMatrix3fv(location, capacity / 9,
-					transpose, matrix);
-		else if (capacity % 4 == 0)
-			RenderUpdater.gl.glUniformMatrix4fv(location, capacity / 16,
-					transpose, matrix);
-		else
-			throw new RuntimeException("Capacity was " + matrix.capacity());
+		RenderUpdater.gl.glUniformMatrix3fv(location, matrix.capacity() / 9,
+				transpose, matrix);
+	}
+
+	public static void setUniformMatrix4(String str, FloatBuffer matrix,
+			boolean transpose) {
+		int location = RenderUpdater.gl.glGetUniformLocation(getActiveShader(),
+				str);
+		RenderUpdater.gl.glUniformMatrix4fv(location, matrix.capacity() / 16,
+				transpose, matrix);
 	}
 
 	public static void setUniform3fv(String str, FloatBuffer scales) {
@@ -111,12 +116,87 @@ public class ShaderScript {
 		case 2:
 			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE2);
 			break;
+		case 3:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE3);
+			break;
+		case 4:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE4);
+			break;
 		}
 		RenderUpdater.gl.glBindTexture(GL2.GL_TEXTURE_2D, texId);
-		RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE0);
+		if (num != 0)
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE0);
 	}
 
-	private static int getActiveShader() {
+	public static void setUniformCubemap(String string, int num, Texture cubeMap) {
+		int location = RenderUpdater.gl.glGetUniformLocation(getActiveShader(),
+				string);
+		RenderUpdater.gl.glUniform1i(location, num);
+		switch (num) {
+		case 0:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE0);
+			break;
+		case 1:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE1);
+			break;
+		case 2:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE2);
+			break;
+		case 3:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE3);
+			break;
+		case 4:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE4);
+			break;
+		case 5:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE5);
+			break;
+		case 6:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE6);
+			break;
+		case 7:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE7);
+			break;
+		case 8:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE8);
+			break;
+		case 9:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE9);
+			break;
+		case 10:
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE10);
+			break;
+		}
+		bindCube(RenderUpdater.gl, cubeMap);
+		if (num != 0)
+			RenderUpdater.gl.glActiveTexture(GL2.GL_TEXTURE0);
+	}
+
+	public static void bindCube(GL2 gl, Texture cubeMap) {
+		gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE,
+				GL2.GL_MODULATE);
+		gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
+		gl.glEnable(GL2.GL_TEXTURE_GEN_S);
+		gl.glEnable(GL2.GL_TEXTURE_GEN_T);
+		gl.glEnable(GL2.GL_TEXTURE_GEN_R);
+
+		gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
+		gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
+		gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
+
+		cubeMap.bind(gl);
+		cubeMap.enable(gl);
+	}
+
+	public static void releaseCube(GL gl, Texture cubeMap) {
+		cubeMap.disable(gl);
+		gl.glDisable(GL2.GL_TEXTURE_GEN_S);
+		gl.glDisable(GL2.GL_TEXTURE_GEN_T);
+		gl.glDisable(GL2.GL_TEXTURE_GEN_R);
+		gl.glDisable(GL2.GL_TEXTURE_CUBE_MAP);
+	}
+
+	public static int getActiveShader() {
 		return activatedShader.shaderNum;
 	}
 
@@ -128,12 +208,34 @@ public class ShaderScript {
 		return activatedShader == transformShader;
 	}
 
-	public String toString() {
-		return name;
-	}
-
 	public static boolean isShaderActivated() {
 		return activatedShader != null;
+	}
+
+	public static void setUniform(String str, boolean b) {
+		setUniform(str, b ? 1 : 0);
+	}
+
+	public static void setUniformMatrix3(String str,
+			float[] rotationMatrixArray, boolean transpose) {
+		int location = RenderUpdater.gl.glGetUniformLocation(getActiveShader(),
+				str);
+		int capacity = rotationMatrixArray.length;
+		RenderUpdater.gl.glUniformMatrix3fv(location, capacity / 9, transpose,
+				rotationMatrixArray, 0);
+	}
+
+	public static void setUniformMatrix4(String str,
+			float[] rotationMatrixArray, boolean transpose) {
+		int location = RenderUpdater.gl.glGetUniformLocation(getActiveShader(),
+				str);
+		int capacity = rotationMatrixArray.length;
+		RenderUpdater.gl.glUniformMatrix4fv(location, capacity / 16, transpose,
+				rotationMatrixArray, 0);
+	}
+
+	public static ShaderScript getActiveShader(GL2 gl) {
+		return activatedShader;
 	}
 
 }

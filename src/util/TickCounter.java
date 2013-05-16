@@ -19,7 +19,7 @@ public class TickCounter {
 		ticks++;
 		long now = System.currentTimeMillis();
 		long delta = now - last;
-		if (delta > 500) {
+		if (delta > 100) {
 			fps = (float) (ticks * 1000) / (float) delta;
 			ticks = 0;
 			last = now;

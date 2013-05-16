@@ -6,13 +6,12 @@ import java.util.List;
 
 import javax.media.opengl.GL2;
 
+import util.Material;
 import world.GameObject;
 import world.GameObjectType;
 
 public abstract class GameObjectRenderer {
-	/**
-	 * @uml.property  name="isSimple"
-	 */
+
 	private boolean isSimple;
 
 	public GameObjectRenderer(boolean simple) {
@@ -32,12 +31,18 @@ public abstract class GameObjectRenderer {
 	public void draw(GL2 gl, List<GameObject> objs, float interp) {
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="isSimple"
-	 */
 	public boolean isSimple() {
 		return isSimple;
+	}
+
+	public abstract void drawSimple(GL2 gl);
+
+	public List<Material> getMaterials() {
+		return null;
+	}
+
+	public String getName() {
+		return this.getClass().getSimpleName();
 	}
 
 }

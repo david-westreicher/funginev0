@@ -14,14 +14,9 @@ import util.Log;
 
 public abstract class Manager<T> implements Manageable {
 	public static Map<String, Manageable> manager = new HashMap<String, Manageable>();
-	/**
-	 * @uml.property  name="savedObjects"
-	 * @uml.associationEnd  qualifier="file:java.lang.String java.util.List"
-	 */
 	private Map<String, List<T>> savedObjects = new HashMap<String, List<T>>();
 	static {
 		new ScriptManager();
-		new SpriteManager();
 		new ShaderManager();
 	}
 

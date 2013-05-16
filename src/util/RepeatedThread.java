@@ -12,18 +12,18 @@ public abstract class RepeatedThread extends Stoppable {
 	}
 
 	public RepeatedThread(long waitTime, int priority, String name) {
-		this(waitTime,name);
+		this(waitTime, name);
 		this.setPriority(priority);
 	}
 
 	public void run() {
-		Log.log(this, " started!");
+		Log.log(this, this.toString() + " started!");
 		running = true;
 		while (running) {
-			executeRepeatedly();
 			waitSomeTime();
+			executeRepeatedly();
 		}
-		Log.log(this, " terminated!");
+		Log.log(this, this.toString() + " terminated!");
 	}
 
 	protected void waitSomeTime() {
