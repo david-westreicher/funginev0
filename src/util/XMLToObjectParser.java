@@ -1,11 +1,9 @@
 package util;
 
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.media.opengl.GL2;
 import javax.vecmath.Vector3f;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;

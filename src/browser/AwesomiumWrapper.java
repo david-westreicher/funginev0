@@ -2,8 +2,6 @@ package browser;
 
 import game.Game;
 
-import com.jogamp.newt.event.KeyEvent;
-import com.jogamp.newt.event.MouseEvent;
 import java.io.File;
 import java.nio.ByteBuffer;
 
@@ -12,9 +10,10 @@ import javax.media.opengl.GL2;
 import rendering.RenderUpdater;
 import settings.Settings;
 import util.Log;
-import util.Worker;
 
 import com.google.gson.Gson;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.opengl.util.texture.Texture;
 
 public class AwesomiumWrapper extends Browser {

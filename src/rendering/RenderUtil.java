@@ -2,8 +2,6 @@ package rendering;
 
 import javax.media.opengl.GL2;
 
-import com.jogamp.opengl.util.gl2.GLUT;
-
 public class RenderUtil {
 
 	public static void drawRec(float[] bbox, GL2 gl) {

@@ -3,8 +3,6 @@ package world;
 import java.util.HashMap;
 import java.util.Map;
 
-import util.Log;
-
 public class VariableHolder {
 	/**
 	 * @uml.property  name="vals"

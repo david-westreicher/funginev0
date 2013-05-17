@@ -1,6 +1,5 @@
 package input;
 
-import util.Log;
 
 public class Mouse {
 

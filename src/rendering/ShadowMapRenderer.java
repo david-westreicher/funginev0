@@ -3,7 +3,6 @@ package rendering;
 import game.Game;
 
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.media.opengl.GL;

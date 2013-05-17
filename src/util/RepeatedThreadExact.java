@@ -1,6 +1,5 @@
 package util;
 
-import settings.Settings;
 
 public abstract class RepeatedThreadExact extends Stoppable {
 

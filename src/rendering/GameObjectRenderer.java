@@ -1,14 +1,11 @@
 package rendering;
 
-import game.Game;
-
 import java.util.List;
 
 import javax.media.opengl.GL2;
 
 import util.Material;
 import world.GameObject;
-import world.GameObjectType;
 
 public abstract class GameObjectRenderer {
 

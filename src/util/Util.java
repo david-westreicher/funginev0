@@ -1,11 +1,8 @@
 package util;
 
 import game.Game;
-import input.CanvasListener;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -18,13 +15,10 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.GregorianCalendar;
 
 import javax.media.opengl.GL2;
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.text.DateFormatter;
 import javax.vecmath.Matrix3f;
 
 import manager.UberManager;

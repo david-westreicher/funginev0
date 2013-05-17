@@ -1,16 +1,13 @@
 package util;
 
+import io.IO;
+
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-
-import io.IO;
 
 import javax.media.opengl.GL2;
 
 import rendering.GameObjectRenderer;
-import util.Md5Renderer.Joint;
-import util.Md5Renderer.Mesh;
 
 public class Md5Renderer extends GameObjectRenderer {
 	public class Mesh {

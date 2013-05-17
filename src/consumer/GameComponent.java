@@ -5,8 +5,6 @@ import java.util.Map;
 
 import component.ObjectComponent;
 
-import world.GameObject;
-
 public class GameComponent<T extends ObjectComponent> {
 
 	protected Map<Integer, T> objectMapping = new HashMap<Integer, T>();

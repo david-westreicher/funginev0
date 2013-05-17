@@ -1,27 +1,18 @@
 package util;
 
+import game.Game;
+import io.IO;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.BufferUnderflowException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.vecmath.Vector3f;
 
-import algorithms.MarchingCube;
-import algorithms.Minecraft;
-
 import physics.IntersectionTest;
-import rendering.ModelRenderer;
-
 import world.GameObject;
-import world.GameObjectType;
-
-import game.Game;
-import io.IO;
 
 public class Voxel {
 

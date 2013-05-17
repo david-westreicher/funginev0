@@ -1,15 +1,14 @@
 package shader;
 
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
-import com.jogamp.opengl.util.texture.Texture;
-
 import rendering.RenderUpdater;
 import util.Log;
+
+import com.jogamp.opengl.util.texture.Texture;
 
 public class ShaderScript {
 

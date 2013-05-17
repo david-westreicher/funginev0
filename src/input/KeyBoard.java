@@ -3,8 +3,6 @@ package input;
 import java.util.ArrayList;
 import java.util.List;
 
-import util.Log;
-
 public class KeyBoard {
 	private List<Character> pressed = new ArrayList<Character>();
 

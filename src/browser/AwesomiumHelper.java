@@ -1,7 +1,5 @@
 package browser;
 
-import com.jogamp.newt.event.KeyEvent;
-
 import game.Game;
 
 import java.io.File;
@@ -12,9 +10,9 @@ import java.util.List;
 
 import reflection.Reflection;
 import settings.Settings;
-import util.Log;
 import util.Worker;
 
+import com.jogamp.newt.event.KeyEvent;
 import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;

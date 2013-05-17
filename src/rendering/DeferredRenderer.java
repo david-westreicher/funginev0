@@ -12,7 +12,6 @@ import javax.media.opengl.fixedfunc.GLMatrixFunc;
 
 import manager.UberManager;
 import settings.Settings;
-import shader.Shader;
 import shader.ShaderScript;
 import util.Log;
 import world.GameObject;

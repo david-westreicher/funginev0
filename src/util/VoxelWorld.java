@@ -7,16 +7,11 @@ import java.util.Random;
 import javax.vecmath.Vector3f;
 
 import physics.IntersectionTest;
-
-import algorithms.SimplexNoise;
-
-import rendering.ChunkRenderer;
 import rendering.RenderUpdater;
 import rendering.VoxelWorldRenderer;
-import settings.Settings;
-
 import world.GameObject;
 import world.GameObjectType;
+import algorithms.SimplexNoise;
 
 public class VoxelWorld extends GameObject {
 

@@ -1,9 +1,5 @@
 package vr;
 
-import java.io.File;
-
-import com.sun.org.apache.bcel.internal.classfile.JavaClass;
-
 import settings.Settings;
 import util.Log;
 

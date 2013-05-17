@@ -4,12 +4,11 @@ import game.Game;
 
 import java.io.File;
 
-import browser.AwesomiumHelper;
-
 import reflection.Reflection;
 import settings.Settings;
 import util.Log;
 import util.Util;
+import browser.AwesomiumHelper;
 
 public class OpenGLTest {
 

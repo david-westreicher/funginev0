@@ -4,7 +4,6 @@ import game.Game;
 import input.CanvasListener;
 
 import java.awt.AWTException;
-import java.awt.Cursor;
 import java.awt.Robot;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +12,6 @@ import javax.media.nativewindow.util.Point;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
-import javax.swing.JFrame;
 
 import settings.Settings;
 import util.Log;

@@ -2,21 +2,12 @@ package game;
 
 import input.Input;
 
-import java.awt.AWTException;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-
 import javax.script.ScriptException;
-import javax.swing.SwingUtilities;
 
 import manager.Manageable;
 import manager.Manager;
 import manager.SoundManager;
 import physics.PhysicsTest;
-import rendering.ChunkRenderer;
 import rendering.DeferredRenderer;
 import rendering.OpenGLRendering;
 import rendering.RenderUpdater;
@@ -32,7 +23,6 @@ import util.Util;
 import util.XMLToObjectParser;
 import vr.RiftFetcher;
 import world.Camera;
-import world.VariableHolder;
 import world.World;
 
 public class Game {

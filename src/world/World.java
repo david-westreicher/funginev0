@@ -1,17 +1,9 @@
 package world;
 
-import game.Game;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import algorithms.SimplexNoise;
-
-import rendering.ChunkRenderer;
-import rendering.RenderUpdater;
-import util.Log;
 
 public class World {
 	/**

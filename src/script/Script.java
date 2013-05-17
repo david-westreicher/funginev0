@@ -1,13 +1,12 @@
 package script;
 
+import game.Game;
+import io.IO;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import game.Game;
-import input.Input;
-import io.IO;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;

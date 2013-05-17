@@ -14,13 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.RuntimeErrorException;
-import javax.vecmath.Vector3f;
-
 import physics.IntersectionTest;
-
-import rendering.DeferredRenderer;
-import util.ObjLoader.Group;
 import world.GameObject;
 
 public class ObjLoader {

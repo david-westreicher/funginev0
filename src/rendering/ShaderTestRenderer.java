@@ -1,16 +1,14 @@
 package rendering;
 
+import game.Game;
+
 import javax.media.opengl.GL;
 
+import manager.UberManager;
 import shader.Shader;
 import shader.ShaderScript;
-import util.Log;
 
 import com.jogamp.opengl.util.texture.Texture;
-
-import manager.UberManager;
-import game.Game;
-import game.Updatable;
 
 public class ShaderTestRenderer extends RenderUpdater {
 

@@ -1,19 +1,10 @@
 package physics;
 
-import game.Game;
-
-import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.security.spec.ECFieldF2m;
 
 import javax.vecmath.Vector3f;
 
-import com.jogamp.graph.math.VectorUtil;
-
-import settings.Settings;
-import util.Log;
-import util.Util;
 import util.VoxelWorld;
 
 public class IntersectionTest {

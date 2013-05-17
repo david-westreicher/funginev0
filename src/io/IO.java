@@ -7,15 +7,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import settings.Settings;
 import util.Log;
 import util.Worker;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class IO {
 

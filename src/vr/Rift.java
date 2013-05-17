@@ -1,7 +1,6 @@
 package vr;
 
 import rendering.RenderUpdater;
-import util.Log;
 
 public class Rift {
 	public static final float HScreenSize = 0.14976f;

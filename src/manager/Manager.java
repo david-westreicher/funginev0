@@ -1,16 +1,9 @@
 package manager;
 
-import io.IO;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.script.ScriptException;
-
-import script.GameScript;
-import util.Log;
 
 public abstract class Manager<T> implements Manageable {
 	public static Map<String, Manageable> manager = new HashMap<String, Manageable>();

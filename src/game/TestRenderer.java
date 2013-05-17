@@ -3,7 +3,6 @@ package game;
 import javax.media.opengl.GL;
 
 import manager.UberManager;
-
 import rendering.RenderUpdater;
 import shader.Shader;
 import shader.ShaderScript;

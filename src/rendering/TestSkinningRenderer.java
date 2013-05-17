@@ -1,25 +1,13 @@
 package rendering;
 
-import game.Game;
-
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.media.opengl.GL2;
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
-
-import com.jogamp.opengl.util.glsl.ShaderUtil;
 
 import manager.UberManager;
-
-import rendering.TestSkinningRenderer.Bone;
-import rendering.TestSkinningRenderer.MatrixStack;
 import shader.Shader;
 import shader.ShaderScript;
 import util.Log;

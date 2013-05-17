@@ -2,13 +2,11 @@ package rendering;
 
 import java.nio.FloatBuffer;
 
-import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
-import com.jogamp.common.nio.Buffers;
-
-import util.Log;
 import util.Voxel;
+
+import com.jogamp.common.nio.Buffers;
 
 public class ChunkRenderer extends ModelRenderer {
 

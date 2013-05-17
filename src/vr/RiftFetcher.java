@@ -2,12 +2,9 @@ package vr;
 
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Quat4d;
-import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
-import settings.Settings;
 import util.RepeatedRunnable;
-import util.Util;
 
 public class RiftFetcher extends RepeatedRunnable {
 

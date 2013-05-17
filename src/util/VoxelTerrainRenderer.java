@@ -1,17 +1,10 @@
 package util;
 
-import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.media.opengl.GL2;
-
-import com.jogamp.opengl.util.gl2.GLUT;
-
-import rendering.GameObjectRenderer;
 import rendering.ModelRenderer;
-import rendering.RenderUpdater;
 
 public class VoxelTerrainRenderer extends ModelRenderer {
 

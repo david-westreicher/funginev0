@@ -2,25 +2,18 @@ package manager;
 
 import io.IO;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
-import com.jogamp.common.nio.Buffers;
-import com.jogamp.opengl.util.texture.Texture;
-
 import rendering.RenderUpdater;
-import settings.Settings;
 import shader.ShaderScript;
 import util.Log;
-import util.Util;
+
+import com.jogamp.common.nio.Buffers;
 
 public class ShaderManager extends Manager<ShaderScript> {
 

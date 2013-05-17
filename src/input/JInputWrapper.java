@@ -9,10 +9,8 @@ import java.util.Map;
 
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
-import net.java.games.input.ControllerEnvironment;
 import net.java.games.input.DirectAndRawInputEnvironmentPlugin;
 import util.Log;
-import util.RepeatedRunnable;
 import util.RepeatedThread;
 
 public class JInputWrapper {

@@ -1,15 +1,13 @@
 package input;
 
 import game.Game;
+import rendering.RenderUpdater;
+import settings.Settings;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
-import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.MouseEvent;
-
-import rendering.RenderUpdater;
-import settings.Settings;
-import util.Log;
+import com.jogamp.newt.event.MouseListener;
 
 public class CanvasListener implements MouseListener, KeyListener {
 	private Input input;

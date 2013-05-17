@@ -4,8 +4,6 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import util.ObjLoader;
-
 public class Minecraft {
 
 	public static FloatBuffer[] minecraftMesh(int steps, float[][][] voxels) {

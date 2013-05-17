@@ -8,10 +8,10 @@ import java.util.List;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
-import com.jogamp.common.nio.Buffers;
-
 import shader.ShaderScript;
 import util.Log;
+
+import com.jogamp.common.nio.Buffers;
 
 public class DOFRenderer extends RenderUpdater {
 

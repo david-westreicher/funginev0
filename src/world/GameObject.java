@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Quat4f;
-import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
 import physics.PhysicsTest;

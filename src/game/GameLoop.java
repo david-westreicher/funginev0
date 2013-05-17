@@ -1,26 +1,9 @@
 package game;
 
-import java.awt.EventQueue;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.media.opengl.GLContext;
-import javax.media.opengl.Threading;
-
-import jogamp.opengl.ThreadingImpl;
-
-import rendering.DeferredRenderer;
 import rendering.OpenGLRendering;
-import rendering.RenderUpdater;
-import settings.Settings;
 import util.Log;
 import util.RepeatedRunnable;
-import util.RepeatedThreadExact;
-import util.Stoppable;
 import util.TickCounter;
-import util.Util;
 
 public class GameLoop extends RepeatedRunnable {
 	public static int TICKS_PER_SECOND = 60;
