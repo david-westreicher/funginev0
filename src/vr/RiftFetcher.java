@@ -5,8 +5,9 @@ import javax.vecmath.Quat4d;
 import javax.vecmath.Vector3f;
 
 import util.RepeatedRunnable;
+import vr.VRFactory.VR;
 
-public class RiftFetcher extends RepeatedRunnable {
+public class RiftFetcher extends RepeatedRunnable implements VR {
 
 	private Matrix3f m = new Matrix3f();
 	private Matrix3f modifiable = new Matrix3f();

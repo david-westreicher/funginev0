@@ -1,19 +1,19 @@
 package util;
 
-
 public abstract class RepeatedRunnable extends Stoppable {
 	public RepeatedRunnable(String name) {
 		super(name);
 	}
 
 	/**
-	 * @uml.property  name="pause"
+	 * @uml.property name="pause"
 	 */
 	private boolean pause = false;
 
 	@Override
 	public void run() {
 		Log.log(this, " started!");
+		onStarted();
 		while (running) {
 			if (pause) {
 				synchronized (this) {
@@ -26,11 +26,14 @@ public abstract class RepeatedRunnable extends Stoppable {
 			}
 			executeRepeatedly();
 		}
-		Log.log(this,"terminated!");
+		Log.log(this, "terminated!");
 		onStopped();
 	}
 
 	protected void onStopped() {
+	}
+
+	protected void onStarted() {
 	}
 
 	protected abstract void executeRepeatedly();

@@ -95,10 +95,9 @@ public class GameLoop extends RepeatedRunnable {
 		if (mechanics != null)
 			mechanics.dispose();
 		mechanics = null;
-		Updatable tmpRenderer = renderer;
 		renderer = null;
-		if (tmpRenderer != null)
-			tmpRenderer.dispose();
+		if (renderer != null)
+			renderer.dispose();
 		if (sound != null)
 			sound.dispose();
 		sound = null;

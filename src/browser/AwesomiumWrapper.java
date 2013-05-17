@@ -30,7 +30,7 @@ public class AwesomiumWrapper extends Browser {
 
 	@Override
 	public void mouseButton(int i, boolean down) {
-		Log.log(this, "mouse down:" + down + ", #" + i);
+		//Log.log(this, "mouse down:" + down + ", #" + i);
 		AwesomiumHelper.mouseButton(i, down);
 	}
 

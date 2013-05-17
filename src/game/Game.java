@@ -22,6 +22,7 @@ import util.Stoppable;
 import util.Util;
 import util.XMLToObjectParser;
 import vr.RiftFetcher;
+import vr.VRFactory;
 import world.Camera;
 import world.World;
 
@@ -37,12 +38,12 @@ public class Game {
 	private boolean hasPhysics = false;
 	public boolean exitFlag = false;
 	public boolean fullscreenFlag = false;
-	public static RiftFetcher vr;
+	public static VRFactory.VR vr;
 
 	public Game() {
 		INSTANCE = this;
 		if (Settings.VR)
-			vr = new RiftFetcher();
+			vr = VRFactory.createVR();
 		FolderWatcher f = new FolderWatcher(Settings.RESSOURCE_FOLDER);
 		f.addFolderListener(new GameWatcher(this));
 		f.start();

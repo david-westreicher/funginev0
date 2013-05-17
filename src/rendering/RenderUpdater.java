@@ -178,7 +178,7 @@ public class RenderUpdater implements Updatable, GLEventListener {
 		if (Settings.STEREO)
 			gl.glViewport(0, 0, width * 2, height);
 
-		if (Settings.USE_BERKELIUM)
+		if (Settings.USE_BROWSER)
 			browser.render(gl);
 		// renderCrosshair();
 		if (!Settings.SHOW_STATUS)

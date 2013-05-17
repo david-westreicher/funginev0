@@ -18,7 +18,6 @@ public class OpenGLTest {
 		Log.log(OpenGLTest.class, "Ressource folder is: "
 				+ Settings.RESSOURCE_FOLDER);
 
-		// Log.getInstance().excludeFromLogging(BerkeliumWrapper.class);
 		Log.getInstance().excludeFromLogging(Reflection.class);
 		Log.getInstance().excludeFromLogging(AwesomiumHelper.class);
 		Game g = new Game();

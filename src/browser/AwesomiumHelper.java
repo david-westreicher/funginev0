@@ -10,8 +10,10 @@ import java.util.List;
 
 import reflection.Reflection;
 import settings.Settings;
+import util.Log;
 import util.Worker;
 
+import com.jogamp.common.os.Platform;
 import com.jogamp.newt.event.KeyEvent;
 import com.sun.jna.Callback;
 import com.sun.jna.Library;
@@ -31,11 +33,18 @@ public class AwesomiumHelper {
 	private static final FungineCallback fungineCallback = new FungineCallback();
 
 	static {
-		System.setProperty("jna.library.path", "/usr/lib/awesomium-1.6.5");
+		if (com.sun.jna.Platform.isWindows()) {
+			System.setProperty("jna.library.path", "libs\\\\awesomium");
+			INSTANCE = (Awesomium) Native.loadLibrary("Awesomium",
+					Awesomium.class);
+		} else {
+			System.setProperty("jna.library.path", "/usr/lib/awesomium-1.6.5");
+			INSTANCE = (Awesomium) Native.loadLibrary("libawesomium-1.6.5",
+					Awesomium.class);
+		}
 	}
 
-	private final static Awesomium INSTANCE = (Awesomium) Native.loadLibrary(
-			"libawesomium-1.6.5", Awesomium.class);
+	private final static Awesomium INSTANCE;
 
 	private interface Awesomium extends Library {
 
@@ -111,6 +120,8 @@ public class AwesomiumHelper {
 
 		void awe_webview_create_object(awe_webview webview,
 				awe_string object_name);
+
+		void awe_webview_focus(awe_webview webview);
 
 		void awe_webview_set_object_callback(awe_webview webview,
 				awe_string object_name, awe_string callback_name);
@@ -206,7 +217,7 @@ public class AwesomiumHelper {
 	}
 
 	public static void loadUrl(final String site, final Runnable... callBack) {
-		//Log.log(AwesomiumHelper.class, "Loading url: " + site);
+		// Log.log(AwesomiumHelper.class, "Loading url: " + site);
 		worker.addJob(new Runnable() {
 			@Override
 			public void run() {
@@ -220,7 +231,7 @@ public class AwesomiumHelper {
 	}
 
 	public static void loadFile(final String file, final Runnable... callBack) {
-		//Log.log(AwesomiumHelper.class, "Loading file: " + file);
+		// Log.log(AwesomiumHelper.class, "Loading file: " + file);
 		worker.addJob(new Runnable() {
 			@Override
 			public void run() {
@@ -232,10 +243,15 @@ public class AwesomiumHelper {
 	}
 
 	protected static void onLoad(Runnable... callBack) {
-		while (INSTANCE.awe_webview_is_loading_page(webview))
+		long timeoutStart = System.currentTimeMillis();
+		while (INSTANCE.awe_webview_is_loading_page(webview)
+				&& System.currentTimeMillis() - timeoutStart < 1000) {
 			update(100);
-		//Log.log(AwesomiumHelper.class, "Page loaded");
+			// Log.log(AwesomiumHelper.class, "loading page");
+		}
+		// Log.log(AwesomiumHelper.class, "Page loaded");
 		update(30);
+		INSTANCE.awe_webview_focus(webview);
 		for (Runnable r : callBack)
 			r.run();
 	}
@@ -359,8 +375,8 @@ public class AwesomiumHelper {
 
 		public void callback(awe_webview caller, awe_string message,
 				int lineNumber, awe_string source) {
-			//Log.log(this, createString(message) + ":" + lineNumber + ":"
-			//		+ createString(source));
+			// Log.log(this, createString(message) + ":" + lineNumber + ":"
+			// + createString(source));
 		}
 	}
 
@@ -370,8 +386,8 @@ public class AwesomiumHelper {
 			awe_jsvalue element = INSTANCE
 					.awe_jsarray_get_element(arguments, 0);
 			String arg = createString(INSTANCE.awe_jsvalue_to_string(element));
-			//Log.log(this, createString(object_name) + "."
-			//		+ createString(callback_name) + "(" + arg + ")");
+			// Log.log(this, createString(object_name) + "."
+			// + createString(callback_name) + "(" + arg + ")");
 			Reflection.execute(arg);
 		}
 	}

@@ -72,8 +72,8 @@ public class CanvasListener implements MouseListener, KeyListener {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_F1) {
-			Settings.USE_BERKELIUM = !Settings.USE_BERKELIUM;
-			if (Settings.USE_BERKELIUM) {
+			Settings.USE_BROWSER = !Settings.USE_BROWSER;
+			if (Settings.USE_BROWSER) {
 				Game.INSTANCE.loop.pauseLogic();
 				Game.INSTANCE.hideMouse(false);
 				Settings.SHOW_STATUS = false;

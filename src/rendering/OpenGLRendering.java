@@ -72,7 +72,7 @@ public class OpenGLRendering {
 		window.addKeyListener(c);
 		window.addWindowListener(new WindowAdapter() {
 			public void windowDestroyNotify(WindowEvent arg0) {
-				Game.INSTANCE.exit();
+				Game.INSTANCE.exitFlag = true;
 			};
 		});
 	}
