@@ -8,7 +8,6 @@ import util.RepeatedRunnable;
 
 public class RiftFetcher extends RepeatedRunnable {
 
-	private Process p;
 	private Matrix3f m = new Matrix3f();
 	private Matrix3f modifiable = new Matrix3f();
 	private Matrix3f tempM = new Matrix3f();
