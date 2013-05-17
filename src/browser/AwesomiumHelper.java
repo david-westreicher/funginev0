@@ -32,7 +32,7 @@ public class AwesomiumHelper {
 
 	static {
 		if (com.sun.jna.Platform.isWindows()) {
-			System.setProperty("jna.library.path", "libs\\\\awesomium");
+			//System.setProperty("jna.library.path", "libs\\\\awesomium");
 			INSTANCE = (Awesomium) Native.loadLibrary("Awesomium",
 					Awesomium.class);
 		} else {

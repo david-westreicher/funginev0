@@ -22,7 +22,7 @@ import com.jogamp.opengl.util.texture.Texture;
 
 public class DeferredRenderer extends RenderUpdater {
 	private static final float SKYBOX_SCALE = 10;
-	private static final boolean RENDER_SKYBOX = true;
+	private static final boolean RENDER_SKYBOX = false;
 	protected static final int SHADOW_MAP_SIZE = 512;
 	private static boolean HATCHED = true;
 	public static boolean DEPTH_FIRST = false;
@@ -126,9 +126,9 @@ public class DeferredRenderer extends RenderUpdater {
 				createTex(2);
 				createTex(3);
 				createShadowFob(4, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
-				if (RENDER_SKYBOX)
-					cubeMap = createCubeMap(Settings.ENGINE_FOLDER
-							+ "img/nightsky_");
+				// if (RENDER_SKYBOX)
+				cubeMap = createCubeMap(Settings.ENGINE_FOLDER
+						+ "img/black-pixel.jpg");
 			}
 		});
 		lightRenderer = new LightRenderer();
@@ -571,16 +571,14 @@ public class DeferredRenderer extends RenderUpdater {
 	public void initShaderUniforms() {
 		super.initShaderUniforms();
 		ShaderScript.setUniform("time", (float) Game.INSTANCE.loop.tick);
-		if (RENDER_SKYBOX)
-			ShaderScript.setUniformCubemap("cubeMap", 10, cubeMap);
+		ShaderScript.setUniformCubemap("cubeMap", 10, cubeMap);
 		ShaderScript.setUniform3fv("camPos", interpolatePos(Game.INSTANCE.cam));
 	}
 
 	@Override
 	public void endShaderUniforms() {
 		super.endShaderUniforms();
-		if (RENDER_SKYBOX)
-			ShaderScript.releaseCube(gl, cubeMap);
+		ShaderScript.releaseCube(gl, cubeMap);
 	}
 
 }

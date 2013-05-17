@@ -738,13 +738,14 @@ public class RenderUpdater implements Updatable, GLEventListener {
 	protected Texture createCubeMap(String img) {
 		gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		Texture cubeMapTex = TextureIO.newTexture(GL.GL_TEXTURE_CUBE_MAP);
-		String[] shortCuts = new String[] { "east.bmp", "west.bmp", "up.bmp",
-				"down.bmp", "north.bmp", "south.bmp" };
+		// String[] shortCuts = new String[] { "east.bmp", "west.bmp", "up.bmp",
+		// "down.bmp", "north.bmp", "south.bmp" };
 		// String[] shortCuts = new String[] { "r.jpg", "l.jpg", "u.jpg",
 		// "d.jpg",
 		// "f.jpg", "b.jpg" };
 		// String[] shortCuts = new String[] { "+Z.tga", "-Z.tga", "+Y.tga",
 		// "-Y.tga", "+X.tga", "-X.tga" };
+		String[] shortCuts = new String[] { "", "", "", "", "", "" };
 		Log.log(this, "create cubemap: " + img);
 		try {
 			cubeMapTex.updateImage(
