@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects>
+    <object name="Daemon" >
+        <renderer>obj/daemon/daemon.obj:obj</renderer>
+    </object>
 </objects>

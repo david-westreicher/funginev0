@@ -1,18 +1,20 @@
 var centerMouse = false;
 var rot = game.cam.rotation;
 var keyB = game.input.keyboard;
-var movementSpeed = 1;
+var movementSpeed = 0.1;
 var coolDown = 0;
+var bla = null;
 
-function init(game, factory) {/*
-    bla = factory.createGameObject("PointLight");
-    bla.size[0] = 150;
-    bla.size[1] = 150;
-    bla.size[2] = 150;
-    game.world.add(bla);*/
+function init(game, factory) {
+    bla = factory.createGameObject("Daemon");
+    bla.size[0] = 3;
+    bla.size[1] = 3;
+    bla.size[2] = 3;
+    game.world.add(bla);
 }
 
 function update(game) {
+	bla.rotation[1]+=0.01;
     camera();
 
     if (keyB.isDown('p') && coolDown > 20) {
