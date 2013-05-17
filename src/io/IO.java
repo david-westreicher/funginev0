@@ -52,6 +52,10 @@ public class IO {
 
 	public static String readToString(String dir, String file, LineComparer lc) {
 		BufferedReader br = read(dir, file);
+		return readToString(br, lc);
+	}
+
+	private static String readToString(BufferedReader br, LineComparer lc) {
 		StringBuilder sb = new StringBuilder();
 		String line;
 		try {
@@ -112,5 +116,9 @@ public class IO {
 		f.createNewFile();
 		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 		return bw;
+	}
+
+	public static String readToString(File f) {
+		return readToString(read(f.getPath(), ""), null);
 	}
 }
