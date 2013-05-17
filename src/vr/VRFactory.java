@@ -15,7 +15,7 @@ public class VRFactory {
 	}
 
 	public static VR createVR() {
-		if(Platform.isWindows())
+		if (Platform.isWindows())
 			return new JRift();
 		return new RiftFetcher();
 	}

@@ -13,10 +13,6 @@ public class SpriteRenderer extends GameObjectRenderer {
 		createList();
 	}
 
-	/**
-	 * @uml.property name="texture"
-	 * @uml.associationEnd readOnly="true"
-	 */
 	public String texture;
 
 	public SpriteRenderer() {
@@ -118,7 +114,7 @@ public class SpriteRenderer extends GameObjectRenderer {
 	@Override
 	public void drawSimple(GL2 gl) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -34,7 +34,6 @@ public class GameMechanics implements Updatable {
 				.getAllObjects();
 		final int tick = Game.INSTANCE.loop.tick;
 
-		
 		Game.INSTANCE.input.update();
 		Game.INSTANCE.cam.beforeUpdate();
 		for (String type : objs.keySet()) {

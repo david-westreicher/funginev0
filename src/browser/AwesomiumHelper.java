@@ -10,10 +10,8 @@ import java.util.List;
 
 import reflection.Reflection;
 import settings.Settings;
-import util.Log;
 import util.Worker;
 
-import com.jogamp.common.os.Platform;
 import com.jogamp.newt.event.KeyEvent;
 import com.sun.jna.Callback;
 import com.sun.jna.Library;

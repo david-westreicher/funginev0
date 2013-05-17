@@ -331,10 +331,11 @@ public class IntersectionTest {
 				: (step.x / direction.x)), (direction.y == 0 ? Float.MAX_VALUE
 				: (step.y / direction.x)), (direction.z == 0 ? Float.MAX_VALUE
 				: (step.z / direction.x)));
-		/*Log.log(IntersectionTest.class, start);
-		Log.log(IntersectionTest.class, end);
-		Log.log(IntersectionTest.class, xyz);
-		Log.log(IntersectionTest.class, step);*/
+		/*
+		 * Log.log(IntersectionTest.class, start);
+		 * Log.log(IntersectionTest.class, end); Log.log(IntersectionTest.class,
+		 * xyz); Log.log(IntersectionTest.class, step);
+		 */
 		for (int i = 0; i < 5; i++) {
 			// Return it.
 			if (voxelWorld.getVoxelValue(xyz[0], xyz[1], xyz[2]) > 0.5) {
@@ -358,10 +359,12 @@ public class IntersectionTest {
 				tMax.z += tDelta.z;
 			}
 		}
-		/*Log.log(IntersectionTest.class, "first");
-		Log.log(IntersectionTest.class, xyzFirst);
-		Log.log(IntersectionTest.class, "next");
-		Log.log(IntersectionTest.class, xyz);*/
+		/*
+		 * Log.log(IntersectionTest.class, "first");
+		 * Log.log(IntersectionTest.class, xyzFirst);
+		 * Log.log(IntersectionTest.class, "next");
+		 * Log.log(IntersectionTest.class, xyz);
+		 */
 		return new int[][] { xyzFirst, xyz };
 	}
 }

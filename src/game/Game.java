@@ -21,7 +21,6 @@ import util.Log;
 import util.Stoppable;
 import util.Util;
 import util.XMLToObjectParser;
-import vr.RiftFetcher;
 import vr.VRFactory;
 import world.Camera;
 import world.World;

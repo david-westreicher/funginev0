@@ -30,20 +30,8 @@ import com.bulletphysics.collision.shapes.CapsuleShape;
 import com.bulletphysics.collision.shapes.SphereShape;
 
 public class XMLToObjectParser extends DefaultHandler {
-	/**
-	 * @uml.property name="currentObject"
-	 * @uml.associationEnd
-	 */
 	private GameObjectType currentObject;
-	/**
-	 * @uml.property name="currentTag"
-	 */
 	private String currentTag;
-	/**
-	 * @uml.property name="currentAtt"
-	 * @uml.associationEnd 
-	 *                     qualifier="constant:java.lang.String java.lang.String"
-	 */
 	private Map<String, String> currentAtt = new HashMap<String, String>();
 
 	public void startElement(String namespaceURI, String localName,

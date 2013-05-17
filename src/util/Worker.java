@@ -23,7 +23,7 @@ public class Worker extends RepeatedThread {
 			if (jobs.size() > 0)
 				jobs.remove(0).run();
 		} else {
-			while(jobs.size()>0)
+			while (jobs.size() > 0)
 				jobs.remove(0).run();
 		}
 	}

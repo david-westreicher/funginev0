@@ -7,10 +7,6 @@ import util.Log;
 import util.RepeatedThread;
 
 public class FolderTest implements FolderListener {
-	/**
-	 * @uml.property  name="f"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
 	private FolderWatcher f;
 
 	public FolderTest() {
@@ -50,9 +46,6 @@ public class FolderTest implements FolderListener {
 		f.listCurrentFiles();
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		new FolderTest();
 	}

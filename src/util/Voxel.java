@@ -168,7 +168,7 @@ public class Voxel {
 	public FloatBuffer[] generateMesh() {
 		return null;
 		// return Minecraft.minecraftMesh(steps, voxels);
-		//return MarchingCube.polygonise(this, worldI, worldJ, worldK);
+		// return MarchingCube.polygonise(this, worldI, worldJ, worldK);
 	}
 
 	private int[][] convert(float[][] minMax, int steps) {

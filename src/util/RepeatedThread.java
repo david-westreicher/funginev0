@@ -1,9 +1,6 @@
 package util;
 
 public abstract class RepeatedThread extends Stoppable {
-	/**
-	 * @uml.property name="waitTime"
-	 */
 	private long waitTime;
 
 	public RepeatedThread(long waitTime, String name) {

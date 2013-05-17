@@ -46,7 +46,7 @@ public class VoxelWorldRenderer extends GameObjectRenderer {
 			@Override
 			public void run() {
 				UberManager.getTexture("img/stone.jpg");
-				//UberManager.getTexture("img/stone.jpg");
+				// UberManager.getTexture("img/stone.jpg");
 			}
 		});
 		for (int i = 0; i < VoxelWorld.CHUNKSIZE; i++)

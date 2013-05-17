@@ -1,6 +1,5 @@
 package input;
 
-
 public class Mouse {
 
 	public int[] pos = new int[2];

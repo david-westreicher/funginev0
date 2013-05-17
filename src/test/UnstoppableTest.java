@@ -10,7 +10,7 @@ public class UnstoppableTest {
 	public static void main(String[] args) {
 		GLProfile.getDefault();
 		GLProfile.shutdown();
-		//System.exit(0);
+		// System.exit(0);
 	}
 
 }

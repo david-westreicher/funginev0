@@ -84,7 +84,7 @@ public class Reflection {
 								+ ((clss.getSuperclass() != null) ? clss
 										.getSuperclass().getSimpleName() : ""));
 						clss = clss.getSuperclass();
-					}catch (NullPointerException e) {
+					} catch (NullPointerException e) {
 						return;
 					}
 				}

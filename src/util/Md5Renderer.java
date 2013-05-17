@@ -123,7 +123,7 @@ public class Md5Renderer extends GameObjectRenderer {
 	@Override
 	public void drawSimple(GL2 gl) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

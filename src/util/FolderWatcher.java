@@ -9,26 +9,15 @@ import java.util.Map;
 
 public class FolderWatcher extends RepeatedThread {
 	private static final int MAX_COMPARE = 100;
-	/**
-	 * @uml.property name="folder"
-	 */
 	private File folder;
-	/**
-	 * @uml.property name="files"
-	 */
 	private Map<String, Date> files;
-	/**
-	 * @uml.property name="listeners"
-	 * @uml.associationEnd multiplicity="(0 -1)"
-	 *                     elementType="util.FolderListener"
-	 */
 	private List<FolderListener> listeners = new ArrayList<FolderListener>();
 
 	public FolderWatcher(String file) {
 		super(1000, Thread.MIN_PRIORITY, "FolderWatcherThread");
 		folder = new File(file);
-		if(!folder.exists()){
-			Log.err(this, "WARNING!!! Folder "+folder+" doesn't exist");
+		if (!folder.exists()) {
+			Log.err(this, "WARNING!!! Folder " + folder + " doesn't exist");
 		}
 		files = getHashMap(folder);
 	}

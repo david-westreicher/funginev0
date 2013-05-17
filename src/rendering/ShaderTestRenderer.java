@@ -24,7 +24,8 @@ public class ShaderTestRenderer extends RenderUpdater {
 		if (testImage != null) {
 			startOrthoRender();
 			renderTexture.execute(gl);
-			ShaderScript.setUniformTexture("tex", 0, testImage.getTextureObject(gl));
+			ShaderScript.setUniformTexture("tex", 0,
+					testImage.getTextureObject(gl));
 			drawQuad(0);
 			renderTexture.end(gl);
 			endOrthoRender();

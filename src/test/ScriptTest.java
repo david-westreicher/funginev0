@@ -8,9 +8,6 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 public class ScriptTest {
-	/**
-	 * @uml.property  name="script"
-	 */
 	private String script = "var x=0;function count(){x++;inst.lol(x);}";
 
 	public ScriptTest() throws NoSuchMethodException {
@@ -34,9 +31,6 @@ public class ScriptTest {
 
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		try {
 			new ScriptTest();

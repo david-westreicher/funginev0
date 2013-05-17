@@ -2,17 +2,8 @@ package util;
 
 public class TickCounter {
 
-	/**
-	 * @uml.property  name="fps"
-	 */
 	public float fps = 0;
-	/**
-	 * @uml.property  name="ticks"
-	 */
 	private long ticks;
-	/**
-	 * @uml.property  name="last"
-	 */
 	private long last;
 
 	public void tick() {

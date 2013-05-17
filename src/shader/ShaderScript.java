@@ -13,9 +13,6 @@ import com.jogamp.opengl.util.texture.Texture;
 public class ShaderScript {
 
 	private static ShaderScript activatedShader = null;
-	/**
-	 * @uml.property name="shaderNum"
-	 */
 	public int shaderNum;
 	private String file;
 

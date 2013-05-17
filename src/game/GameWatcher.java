@@ -60,7 +60,7 @@ public class GameWatcher implements FolderListener {
 		} else {
 			String folder = s.split(File.separator)[0];
 			s = s.replace("\\", "/");
-			Log.log(this,folder);
+			Log.log(this, folder);
 			if (folder.equals("scripts")) {
 				game.getManager("script").changed(s);
 			} else if (folder.equals("img")) {

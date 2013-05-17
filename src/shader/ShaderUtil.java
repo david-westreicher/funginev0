@@ -39,7 +39,7 @@ public class ShaderUtil {
 		Log.log(ShaderUtil.class, "starting to compile " + file);
 		String shader = IO.readToString(Settings.ENGINE_FOLDER, file,
 				new Import());
-		//Log.log(ShaderUtil.class, shader);
+		// Log.log(ShaderUtil.class, shader);
 		String[] shaders = shader.split("//fragment");
 		if (shaders.length != 2)
 			throw new RuntimeException("could'nt parse shader " + file);

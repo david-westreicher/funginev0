@@ -20,8 +20,8 @@ public class DOFRenderer extends RenderUpdater {
 	private ShaderScript sscript2;
 
 	public DOFRenderer() {
-		//sscript = new ShaderScript("shader\\glow.glsl");
-		//sscript2 = new ShaderScript("shader\\blur.glsl");
+		// sscript = new ShaderScript("shader\\glow.glsl");
+		// sscript2 = new ShaderScript("shader\\blur.glsl");
 		super.executeInOpenGLContext(new Runnable() {
 			@Override
 			public void run() {

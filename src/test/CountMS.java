@@ -1,9 +1,6 @@
 package test;
 
 public class CountMS {
-	/**
-	 * @uml.property  name="start"
-	 */
 	private long start;
 
 	public CountMS() {

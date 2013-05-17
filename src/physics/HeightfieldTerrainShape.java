@@ -62,15 +62,21 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 	protected int m_upAxis;
 	protected Vector3f m_localScaling = new Vector3f();
 
-	public HeightfieldTerrainShape(int heightStickWidth, int heightStickLength, float[] heightfieldData, float heightScale, float minHeight, float maxHeight, int upAxis, boolean flipQuadEdges) {
-		initialize(heightStickWidth, heightStickLength, heightfieldData, heightScale, minHeight, maxHeight, upAxis, ScalarType.FLOAT, flipQuadEdges);
+	public HeightfieldTerrainShape(int heightStickWidth, int heightStickLength,
+			float[] heightfieldData, float heightScale, float minHeight,
+			float maxHeight, int upAxis, boolean flipQuadEdges) {
+		initialize(heightStickWidth, heightStickLength, heightfieldData,
+				heightScale, minHeight, maxHeight, upAxis, ScalarType.FLOAT,
+				flipQuadEdges);
 	}
 
-	private void initialize(int heightStickWidth, int heightStickLength, float[] heightfieldData, float heightScale, float minHeight, float maxHeight, int upAxis, ScalarType f, boolean flipQuadEdges) {
+	private void initialize(int heightStickWidth, int heightStickLength,
+			float[] heightfieldData, float heightScale, float minHeight,
+			float maxHeight, int upAxis, ScalarType f, boolean flipQuadEdges) {
 		m_heightStickWidth = heightStickWidth;
 		m_heightStickLength = heightStickLength;
-		m_minHeight = minHeight*heightScale;
-		m_maxHeight = maxHeight*heightScale;
+		m_minHeight = minHeight * heightScale;
+		m_maxHeight = maxHeight * heightScale;
 		m_width = (heightStickWidth - 1);
 		m_length = (heightStickLength - 1);
 		m_heightScale = heightScale;
@@ -79,7 +85,7 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 		m_flipQuadEdges = flipQuadEdges;
 		m_useDiamondSubdivision = false;
 		m_upAxis = upAxis;
-		m_localScaling.set(1,1,1);
+		m_localScaling.set(1, 1, 1);
 
 		// determine min/max axis-aligned bounding box (aabb) values
 		switch (m_upAxis) {
@@ -112,7 +118,8 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 	}
 
 	@Override
-	public void processAllTriangles(TriangleCallback callback, Vector3f aabbMin, Vector3f aabbMax) {
+	public void processAllTriangles(TriangleCallback callback,
+			Vector3f aabbMin, Vector3f aabbMax) {
 		Vector3f localAabbMin = new Vector3f();
 
 		localAabbMin.x = aabbMin.x * (1.f / m_localScaling.x);
@@ -134,7 +141,8 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 		quantizeWithClamp(quantizedAabbMax, localAabbMax);
 
 		// expand the min/max quantized values
-		// this is to catch the case where the input aabb falls between grid points!
+		// this is to catch the case where the input aabb falls between grid
+		// points!
 		for (int i = 0; i < 3; ++i) {
 			quantizedAabbMin[i]--;
 			quantizedAabbMax[i]++;
@@ -189,7 +197,8 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 				vertices[0] = new Vector3f();
 				vertices[1] = new Vector3f();
 				vertices[2] = new Vector3f();
-				if (m_flipQuadEdges || (m_useDiamondSubdivision && (((j + x) & 1) != 0))) {// XXX
+				if (m_flipQuadEdges
+						|| (m_useDiamondSubdivision && (((j + x) & 1) != 0))) {// XXX
 					// first triangle
 					getVertex(x, j, vertices[0]);
 					getVertex(x + 1, j, vertices[1]);
@@ -201,20 +210,20 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 					getVertex(x + 1, j + 1, vertices[1]);
 					getVertex(x, j + 1, vertices[2]);
 					// callback->processTriangle(vertices,x,j);
-                                        callback.processTriangle(vertices, x, j);
+					callback.processTriangle(vertices, x, j);
 				} else {
 					// first triangle
 					getVertex(x, j, vertices[0]);
 					getVertex(x, j + 1, vertices[1]);
 					getVertex(x + 1, j, vertices[2]);
 					// callback->processTriangle(vertices,x,j);
-                                        callback.processTriangle(vertices, x, j);
+					callback.processTriangle(vertices, x, j);
 					// second triangle
 					getVertex(x + 1, j, vertices[0]);
 					getVertex(x, j + 1, vertices[1]);
 					getVertex(x + 1, j + 1, vertices[2]);
 					// callback->processTriangle(vertices,x,j);
-                                        callback.processTriangle(vertices, x, j);
+					callback.processTriangle(vertices, x, j);
 				}
 			}
 		}
@@ -227,16 +236,19 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 
 		switch (m_upAxis) {
 		case 0: {
-			vertex.set(height - m_localOrigin.x, (-m_width / 2.0f) + x, (-m_length / 2.0f) + y);
+			vertex.set(height - m_localOrigin.x, (-m_width / 2.0f) + x,
+					(-m_length / 2.0f) + y);
 			break;
 		}
 		case 1: {
-			vertex.set((-m_width / 2.0f) + x, height - m_localOrigin.y, (-m_length / 2.0f) + y);
+			vertex.set((-m_width / 2.0f) + x, height - m_localOrigin.y,
+					(-m_length / 2.0f) + y);
 			break;
 		}
 
 		case 2: {
-			vertex.set((-m_width / 2.0f) + x, (-m_length / 2.0f) + y, height - m_localOrigin.z);
+			vertex.set((-m_width / 2.0f) + x, (-m_length / 2.0f) + y, height
+					- m_localOrigin.z);
 			break;
 		}
 		}
@@ -260,9 +272,10 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 		halfExtents.y = halfExtents.y * m_localScaling.y * 0.5f;
 		halfExtents.z = halfExtents.z * m_localScaling.z * 0.5f;
 
-		/*Vector3f localOrigin(0, 0, 0);
-		localOrigin[m_upAxis] = (m_minHeight + m_maxHeight) * 0.5f; XXX
-		localOrigin *= m_localScaling;*/
+		/*
+		 * Vector3f localOrigin(0, 0, 0); localOrigin[m_upAxis] = (m_minHeight +
+		 * m_maxHeight) * 0.5f; XXX localOrigin *= m_localScaling;
+		 */
 		Matrix3f abs_b = new Matrix3f();
 		abs_b.set(t.basis);
 		MatrixUtil.absolute(abs_b);
@@ -312,7 +325,8 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 	// / of the heightfield's AABB.
 
 	private float getRawHeightFieldValue(int x, int y) {
-		return m_heightfieldDataFloat[(y * m_heightStickWidth) + x] * m_heightScale;
+		return m_heightfieldDataFloat[(y * m_heightStickWidth) + x]
+				* m_heightScale;
 	}
 
 	public static int getQuantized(float x) {
@@ -324,24 +338,28 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 
 	// / given input vector, return quantized version
 	/**
-	 * This routine is basically determining the gridpoint indices for a given input vector, answering the question: "which gridpoint is closest to the provided point?".
-	 *
-	 * "with clamp" means that we restrict the point to be in the heightfield's axis-aligned bounding box.
+	 * This routine is basically determining the gridpoint indices for a given
+	 * input vector, answering the question:
+	 * "which gridpoint is closest to the provided point?".
+	 * 
+	 * "with clamp" means that we restrict the point to be in the heightfield's
+	 * axis-aligned bounding box.
 	 */
 	private void quantizeWithClamp(int[] out, Vector3f clampedPoint) {
 
 		/*
 		 * btVector3 clampedPoint(point); XXX
-		clampedPoint.setMax(m_localAabbMin);
-		clampedPoint.setMin(m_localAabbMax);
-
+		 * clampedPoint.setMax(m_localAabbMin);
+		 * clampedPoint.setMin(m_localAabbMax);
+		 * 
 		 * clampedPoint.clampMax(m_localAabbMax,);
-		clampedPoint.clampMax(m_localAabbMax);
-		clampedPoint.clampMax(m_localAabbMax);
-
-		clampedPoint.clampMin(m_localAabbMin);
-		clampedPoint.clampMin(m_localAabbMin); ///CLAMPS
-		clampedPoint.clampMin(m_localAabbMin);*/
+		 * clampedPoint.clampMax(m_localAabbMax);
+		 * clampedPoint.clampMax(m_localAabbMax);
+		 * 
+		 * clampedPoint.clampMin(m_localAabbMin);
+		 * clampedPoint.clampMin(m_localAabbMin); ///CLAMPS
+		 * clampedPoint.clampMin(m_localAabbMin);
+		 */
 
 		out[0] = getQuantized(clampedPoint.x);
 		out[1] = getQuantized(clampedPoint.y);

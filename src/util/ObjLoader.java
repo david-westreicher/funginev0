@@ -40,9 +40,6 @@ public class ObjLoader {
 
 	}
 
-	/**
-	 * @uml.property name="verticesList"
-	 */
 	public Map<String, Integer> indicesMap = new HashMap<String, Integer>();
 	public List<Float> correctVertices = new ArrayList<Float>();
 	public List<Float> correctUVs = new ArrayList<Float>();

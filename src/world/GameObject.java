@@ -38,10 +38,6 @@ public class GameObject extends VariableHolder {
 		setType(name);
 	}
 
-	/**
-	 * @return
-	 * @uml.property name="type"
-	 */
 	public String getType() {
 		return type;
 	}
@@ -149,10 +145,6 @@ public class GameObject extends VariableHolder {
 				+ Arrays.toString(color) + "]";
 	}
 
-	/**
-	 * @param name
-	 * @uml.property name="type"
-	 */
 	public void setType(String name) {
 		GameObjectType goType = GameObjectType.getType(name);
 		if (goType == null) {

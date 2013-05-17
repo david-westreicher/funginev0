@@ -5,9 +5,6 @@ public abstract class RepeatedRunnable extends Stoppable {
 		super(name);
 	}
 
-	/**
-	 * @uml.property name="pause"
-	 */
 	private boolean pause = false;
 
 	@Override

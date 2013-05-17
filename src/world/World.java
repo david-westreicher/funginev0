@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 public class World {
-	/**
-	 * @uml.property name="gameObjects"
-	 * @uml.associationEnd multiplicity="(0 -1)" elementType="world.GameObject"
-	 */
 	public List<GameObject> gameObjects = new ArrayList<GameObject>();
 
 	public World() {

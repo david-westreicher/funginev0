@@ -185,7 +185,7 @@ public class TestSkinningRenderer extends RenderUpdater {
 		calculateBones();
 		transformSkinning = UberManager.getShader(Shader.TRANSFORM_SKINNING);
 		transformSkinning.execute(gl);
-		super.renderObjects("Box",renderObjs);
+		super.renderObjects("Box", renderObjs);
 		transformSkinning.end(gl);
 		skinning = UberManager.getShader(Shader.SKINNING);
 		skinning.execute(gl);

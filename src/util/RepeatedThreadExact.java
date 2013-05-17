@@ -1,30 +1,13 @@
 package util;
 
-
 public abstract class RepeatedThreadExact extends Stoppable {
-
-	/**
-	 * @uml.property  name="fps"
-	 */
 	private int fps;
-	/**
-	 * @uml.property  name="nanoLength"
-	 */
 	private int nanoLength;
-	/**
-	 * @uml.property  name="frameCount"
-	 */
 	private int frameCount;
-	/**
-	 * @uml.property  name="startTime"
-	 */
 	private long startTime;
-	/**
-	 * @uml.property  name="pause"
-	 */
 	private boolean pause;
 
-	public RepeatedThreadExact(int fps,String name) {
+	public RepeatedThreadExact(int fps, String name) {
 		super(name);
 		setFPS(fps);
 	}
@@ -40,7 +23,7 @@ public abstract class RepeatedThreadExact extends Stoppable {
 		running = true;
 		pause = false;
 		reset();
-		
+
 		while (running) {
 			executeRepeatedly(0);
 			frameCount++;

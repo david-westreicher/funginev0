@@ -52,7 +52,7 @@ public class JoalTest {
 		ALut.alutLoadWAVFile("ressources/explosion.wav", format, data, size,
 				freq, loop);
 		al.alBufferData(buffer[0], format[0], data[0], size[0], freq[0]);
-		//ALut.alutUnloadWAV(format[0], data[0], size[0], freq[0]);
+		// ALut.alutUnloadWAV(format[0], data[0], size[0], freq[0]);
 		// Bind buffer with a source.
 		al.alGenSources(1, source, 0);
 

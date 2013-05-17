@@ -5,9 +5,6 @@ import java.util.List;
 
 public class Stoppable extends Thread {
 	private static List<Stoppable> allThreads = new ArrayList<Stoppable>();
-	/**
-	 * @uml.property name="running"
-	 */
 	protected boolean running = true;
 
 	public Stoppable(String name) {

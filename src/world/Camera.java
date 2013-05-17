@@ -5,17 +5,8 @@ import javax.vecmath.Matrix3f;
 import settings.Settings;
 
 public class Camera extends GameObject {
-	/**
-	 * @uml.property name="oldZoom"
-	 */
 	public float oldZoom = 1;
-	/**
-	 * @uml.property name="zoom"
-	 */
 	public float zoom = 1;
-	/**
-	 * @uml.property name="focus"
-	 */
 	public float focus;
 
 	static {

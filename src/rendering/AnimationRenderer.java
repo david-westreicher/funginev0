@@ -34,23 +34,16 @@ public class AnimationRenderer extends SpriteRenderer {
 
 	@Override
 	public void draw(GL2 gl) {
-		//gl.glColor4f(1, 1, 1, RenderUpdater.cgo.alpha);
-		//drawQuadAnimated(gl);
+		// gl.glColor4f(1, 1, 1, RenderUpdater.cgo.alpha);
+		// drawQuadAnimated(gl);
 	}
-/*
-	private void drawQuadAnimated(GL2 gl) {
-		float[] rec = subSprites.get((int) Math
-				.abs(RenderUpdater.cgo.animSprite) % num);
-		gl.glBegin(GL2.GL_QUADS);
-		gl.glTexCoord2f(rec[0], rec[1]);
-		gl.glVertex3f(-0.5f, -0.5f, 0);
-		gl.glTexCoord2f(rec[2], rec[1]);
-		gl.glVertex3f(+0.5f, -0.5f, 0);
-		gl.glTexCoord2f(rec[2], rec[3]);
-		gl.glVertex3f(+0.5f, 0.5f, 0);
-		gl.glTexCoord2f(rec[0], rec[3]);
-		gl.glVertex3f(-0.5f, 0.5f, 0);
-		gl.glEnd();
-	}
-*/
+	/*
+	 * private void drawQuadAnimated(GL2 gl) { float[] rec =
+	 * subSprites.get((int) Math .abs(RenderUpdater.cgo.animSprite) % num);
+	 * gl.glBegin(GL2.GL_QUADS); gl.glTexCoord2f(rec[0], rec[1]);
+	 * gl.glVertex3f(-0.5f, -0.5f, 0); gl.glTexCoord2f(rec[2], rec[1]);
+	 * gl.glVertex3f(+0.5f, -0.5f, 0); gl.glTexCoord2f(rec[2], rec[3]);
+	 * gl.glVertex3f(+0.5f, 0.5f, 0); gl.glTexCoord2f(rec[0], rec[3]);
+	 * gl.glVertex3f(-0.5f, 0.5f, 0); gl.glEnd(); }
+	 */
 }

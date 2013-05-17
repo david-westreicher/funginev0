@@ -13,24 +13,9 @@ import com.bulletphysics.collision.shapes.CollisionShape;
 public class GameObjectType extends VariableHolder {
 	private static Map<String, GameObjectType> allTypes = new HashMap<String, GameObjectType>();
 
-	/**
-	 * @uml.property name="renderer"
-	 * @uml.associationEnd
-	 */
 	public GameObjectRenderer renderer = null;
-	/**
-	 * @uml.property name="script"
-	 * @uml.associationEnd
-	 */
 	public GameScript script = null;
-	/**
-	 * @uml.property name="shape"
-	 * @uml.associationEnd
-	 */
 	public CollisionShape shape = null;
-	/**
-	 * @uml.property name="name"
-	 */
 	public String name;
 
 	public float shininess = (float) (Math.random() * 2000);

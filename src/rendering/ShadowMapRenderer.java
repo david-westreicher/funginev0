@@ -35,10 +35,10 @@ public class ShadowMapRenderer extends RenderUpdater {
 	private ShaderScript dofShader;
 
 	public ShadowMapRenderer() {
-		//shadowMapScript = new ShaderScript("shader\\shadowMap.glsl");
-		//renderDepth = new ShaderScript("shader\\renderDepth.glsl");
-		//textureShader = new ShaderScript("shader\\textureShader.glsl");
-		//dofShader = new ShaderScript("shader\\blur.glsl");
+		// shadowMapScript = new ShaderScript("shader\\shadowMap.glsl");
+		// renderDepth = new ShaderScript("shader\\renderDepth.glsl");
+		// textureShader = new ShaderScript("shader\\textureShader.glsl");
+		// dofShader = new ShaderScript("shader\\blur.glsl");
 		super.executeInOpenGLContext(new Runnable() {
 			@Override
 			public void run() {
@@ -83,7 +83,8 @@ public class ShadowMapRenderer extends RenderUpdater {
 			rttStart(fobs.get(0)[1], false);
 			renderSkyBox();
 			rttEnd();
-			List<GameObject> lights = renderObjs.get(PointLight.LIGHT_OBJECT_TYPE_NAME);
+			List<GameObject> lights = renderObjs
+					.get(PointLight.LIGHT_OBJECT_TYPE_NAME);
 			int lightNum = 0;
 			if (lights != null) {
 				renderStrings.add("Lights    :  " + lights.size());

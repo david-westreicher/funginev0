@@ -10,6 +10,7 @@ public class RiftJNI {
 			System.loadLibrary("rift");
 		}
 	}
+
 	public native static void start();
 
 	public native static double[] getData();

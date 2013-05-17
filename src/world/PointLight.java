@@ -3,9 +3,6 @@ package world;
 public class PointLight extends GameObject {
 
 	public static final String LIGHT_OBJECT_TYPE_NAME = "PointLight";
-	/**
-	 * @uml.property name="radius"
-	 */
 	public float radius = (float) (Math.random() * 1000 + 1000);
 	public boolean shadow = false;
 	public boolean fallof = true;
