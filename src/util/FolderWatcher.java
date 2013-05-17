@@ -27,6 +27,9 @@ public class FolderWatcher extends RepeatedThread {
 	public FolderWatcher(String file) {
 		super(1000, Thread.MIN_PRIORITY, "FolderWatcherThread");
 		folder = new File(file);
+		if(!folder.exists()){
+			Log.err(this, "WARNING!!! Folder "+folder+" doesn't exist");
+		}
 		files = getHashMap(folder);
 	}
 
