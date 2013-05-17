@@ -1,1 +1,0 @@
-berkelium;chrome.pak;libberkelium-java.so;libffmpegsumo.so;liblibberkelium.so;resources.pak

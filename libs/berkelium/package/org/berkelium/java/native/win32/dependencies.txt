@@ -1,1 +1,0 @@
-avcodec-52.dll;avformat-52.dll;avutil-50.dll;berkelium-java.dll;berkelium.dll;berkelium.exe;icudt46.dll;locales/en-US.dll;resources.pak;wow_helper.exe
