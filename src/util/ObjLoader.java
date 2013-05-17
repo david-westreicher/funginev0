@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import physics.IntersectionTest;
+import settings.Settings;
 import world.GameObject;
 
 public class ObjLoader {
@@ -72,15 +73,17 @@ public class ObjLoader {
 	private boolean flippedCullface;
 	private String name;
 
-	public ObjLoader(String s, boolean flippedCullface) {
-		this(s, flippedCullface, false);
+	public ObjLoader(String s, boolean flippedCullface, boolean engineFolder) {
+		this(s, flippedCullface, false, false);
 	}
 
-	public ObjLoader(String s, boolean flippedCullface, boolean voxelize) {
+	public ObjLoader(String s, boolean flippedCullface, boolean voxelize,
+			boolean engineFolder) {
 		Log.log(this, "starting to parse: " + s);
 		this.flippedCullface = flippedCullface;
 		this.name = s;
-		BufferedReader br = IO.read(s);
+		BufferedReader br = IO.read(engineFolder ? Settings.ENGINE_FOLDER
+				: Settings.RESSOURCE_FOLDER, s);
 		String line;
 		int lineNum = 0;
 		try {
@@ -404,7 +407,7 @@ public class ObjLoader {
 			map[i] = new float[] { -bounds[i][0] - length / 2, length };
 		}
 		float length = Math.max(Math.max(map[0][1], map[1][1]), map[2][1]);
-		//Log.log(ObjLoader.class, "normalizing: " + length);
+		// Log.log(ObjLoader.class, "normalizing: " + length);
 		for (i = 0; i < vertices.size(); i++) {
 			Float curr = vertices.get(i);
 			float[] m = map[i % 3];

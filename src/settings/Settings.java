@@ -14,6 +14,6 @@ public class Settings {
 	public static final boolean USE_FULL_SCREEN = false;
 	public static final String ENGINE_FOLDER = "engine" + File.separator;
 	public static final boolean VR = STEREO;
-	public static boolean USE_BERKELIUM = false;
+	public static boolean USE_BROWSER = false;
 	public static boolean SHOW_STATUS = true;
 }

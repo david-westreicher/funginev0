@@ -40,6 +40,11 @@ public class UberManager {
 	}
 
 	public static Texture getTexture(final String name) {
+		return getTexture(name, false);
+	}
+
+	public static Texture getTexture(final String name,
+			final boolean engineFolder) {
 		if (name == null || loadingTextures.contains(name))
 			return null;
 		if (name.equals(Browser.TEXTURE_NAME))
@@ -56,8 +61,9 @@ public class UberManager {
 						Log.log(this, "loading: " + name);
 						final TextureData textData = TextureIO.newTextureData(
 								RenderUpdater.gl.getGLProfile(), new File(
-										Settings.RESSOURCE_FOLDER + name),
-								false, null);
+										(engineFolder ? Settings.ENGINE_FOLDER
+												: Settings.RESSOURCE_FOLDER)
+												+ name), false, null);
 						RenderUpdater.queue(new Runnable() {
 
 							@Override

@@ -56,11 +56,16 @@ public class ModelRenderer extends GameObjectRenderer {
 	}
 
 	public ModelRenderer(String s, boolean flippedCullface) {
-		this(s, flippedCullface, false);
+		this(s, flippedCullface, false, false);
 	}
 
 	public ModelRenderer(String s, boolean flippedCullface, boolean voxelize) {
-		this(new ObjLoader(s, flippedCullface, voxelize));
+		this(s, flippedCullface, voxelize, false);
+	}
+
+	public ModelRenderer(String s, boolean flippedCullface, boolean voxelize,
+			boolean engineFolder) {
+		this(new ObjLoader(s, flippedCullface, voxelize, engineFolder));
 		if (voxelize) {
 			Log.log(this, "voxelizing: " + s);
 		}

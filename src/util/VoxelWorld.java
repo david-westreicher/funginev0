@@ -116,7 +116,7 @@ public class VoxelWorld extends GameObject {
 
 	public void loadFromFile(String file) {
 		Voxel voxels = new Voxel(CHUNKSIZE * 16);
-		ObjLoader ojb = new ObjLoader(file, false);
+		ObjLoader ojb = new ObjLoader(file, false, false);
 		voxels.indices = ojb.indices;
 		voxels.vertices = ojb.vertices;
 		voxels.voxelize(file, CHUNKSIZE * 16);

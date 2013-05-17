@@ -60,7 +60,7 @@ public class DeferredRenderer extends RenderUpdater {
 		// private ModelRenderer coneRenderer;
 
 		public LightRenderer() {
-			super("obj/lowpolySphere.obj", false);
+			super("obj/lowpolySphere.obj", false, false, true);
 			// coneRenderer = new ModelRenderer("obj/lowpolyCone.obj");
 		}
 
@@ -120,24 +120,18 @@ public class DeferredRenderer extends RenderUpdater {
 
 			@Override
 			public void run() {
-				UberManager.getTexture("img/random.png");
+				UberManager.getTexture("img/random.png", true);
 				createGBuffer();
 				createTex(1);
 				createTex(2);
 				createTex(3);
 				createShadowFob(4, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 				if (RENDER_SKYBOX)
-					cubeMap = createCubeMap(Settings.RESSOURCE_FOLDER
+					cubeMap = createCubeMap(Settings.ENGINE_FOLDER
 							+ "img/nightsky_");
 			}
 		});
 		lightRenderer = new LightRenderer();
-		super.excludeGameObjectFromRendering("Skybox-b");
-		super.excludeGameObjectFromRendering("Skybox-d");
-		super.excludeGameObjectFromRendering("Skybox-f");
-		super.excludeGameObjectFromRendering("Skybox-l");
-		super.excludeGameObjectFromRendering("Skybox-r");
-		super.excludeGameObjectFromRendering("Skybox-u");
 		// super.excludeGameObjectFromRendering(PointLight.LIGHT_OBJECT_TYPE_NAME);
 	}
 

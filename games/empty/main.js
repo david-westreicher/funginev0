@@ -44,14 +44,7 @@ function camera() {
                 * movementSpeed;
         for ( var i = 0; i < 3; i++){
             game.cam.pos[i] += mov[i] * ySpeed * movementSpeed;
-//            shuttle.pos[i] = game.cam.pos[i];
         }
-//        shuttle.rotation[2] = -game.cam.rotation[0];
-//        shuttle.rotation[1] = game.cam.rotation[1]-Math.PI/2;
-//        shuttle.pos[1]-=300;
-//        shuttle.pos[0]-=Math.cos(shuttle.rotation[1])*300;
-//        shuttle.pos[2]+=Math.sin(shuttle.rotation[1])*300;
-//        shuttle.setPos(shuttle.pos);
         game.centerMouse();
     }
 }

@@ -178,7 +178,7 @@ var r = new MooRainbow('titleColor', {
 		onChange: function(color) { 
        this.element.value = color.hex; 
        var rgb = color.rgb;
-        if(fungineCallback.execute)
+        if(fungineCallback.execute&&currObject>=0)
      		fungineCallback.execute('world.gameObjects.get('+currObject+').setColor('+rgb[0].toFixed(5)/255.0+','+rgb[1].toFixed(5)/255.0+','+rgb[2].toFixed(5)/255.0+')');
     	} 
 	});
@@ -188,7 +188,7 @@ var r = new MooRainbow('titleColor', {
   var color = [0.0, 0.0, 0.0];
   var pos = [0.0, 0.0, 0.0];
   var rot = [0.0, 0.0, 0.0];
-  var currObject = 0;
+  var currObject =-1;
     var slider = $('objSlider');
   $$('.slider').each(function(slider, i){
     var sl = new Slider(slider, slider.getElement('.knob'), {
@@ -214,31 +214,33 @@ var r = new MooRainbow('titleColor', {
 				$$('.slider')[5].sl.set((window.objs[currObject].rotation[1]/(Math.PI*2.0/1000.0))%360);
 				$$('.slider')[6].sl.set((window.objs[currObject].rotation[2]/(Math.PI*2.0/1000.0))%360);*/
 				//todo set trans,rot,light,color,radius slider to selected object
-	     	  	fungineCallback.execute('world.gameObjects.get('+currObject+').updateBbox()');
-	     		fungineCallback.execute("world.mark("+currObject+")");
+				if(currObject>=0){
+					fungineCallback.execute('world.gameObjects.get('+currObject+').updateBbox()');
+					fungineCallback.execute("world.mark("+currObject+")");
+				}
      		}
       	}else if(i<=3){
 	      	pos[i-1] = (this.step-500)/10;
-	        if(fungineCallback.execute){
+	        if(fungineCallback.execute&&currObject>=0){
 	     	  fungineCallback.execute('world.gameObjects.get('+currObject+').setPos('+pos[0]+','+pos[1]+','+pos[2]+')');
 	     	  fungineCallback.execute('world.gameObjects.get('+currObject+').updateBbox()');
 	     	}
 	  	}else if(i<=6){
 	  		rot[i-4] = this.step.toFixed(5)*(Math.PI*2.0/1000.0);
-	        if(fungineCallback.execute){
+	        if(fungineCallback.execute&&currObject>=0){
 	     	  fungineCallback.execute('world.gameObjects.get('+currObject+').setRotation('+rot[0]+','+rot[1]+','+rot[2]+')');
 	     	  fungineCallback.execute('world.gameObjects.get('+currObject+').beforeUpdate()');
 	     	}
 	  	}else if(i<=7){
-	        if(fungineCallback.execute&&window.objs){
+	        if(fungineCallback.execute&&window.objs&&currObject>=0){
 	     	  fungineCallback.execute('world.gameObjects.get('+currObject+').getGameObjectType().shininess='+ this.step.toFixed(5)/10);
 	     	}
 	  	}else if(i<=8){
-	        if(fungineCallback.execute&&window.objs){
+	        if(fungineCallback.execute&&window.objs&&currObject>=0){
 	     	  fungineCallback.execute('world.gameObjects.get('+currObject+').setRadius('+ this.step.toFixed(5)/10.0+')');
 	     	}
 	  	}else if(i<=9){
-	        if(fungineCallback.execute&&window.objs){
+	        if(fungineCallback.execute&&window.objs&&currObject>=0){
 	     	   fungineCallback.execute('world.gameObjects.get('+currObject+').getGameObjectType().reflective='+ this.step.toFixed(5)/1000.0);
 	     	}
 	  	}else if(i<=10){
