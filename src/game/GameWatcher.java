@@ -48,8 +48,7 @@ public class GameWatcher implements FolderListener {
 				e.printStackTrace();
 			}
 			gl.endPause();
-		}
-		if (s.equals(Settings.OBJECTS_XML)) {
+		} else if (s.equals(Settings.OBJECTS_XML)) {
 			GameLoop gl = game.loop;
 			UberManager.clear();
 			Util.sleep(10);
